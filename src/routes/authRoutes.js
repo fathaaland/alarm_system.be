@@ -92,4 +92,20 @@ router.post("/refresh-token", async (req, res) => {
   }
 });
 
+router.post("/logout", async (req, res) => {
+  const { refreshToken } = req.body;
+
+  try {
+    const user = await User.findOne({ refreshToken });
+    if (user) {
+      user.refreshToken = null; // Smažte refresh token
+      await user.save();
+    }
+
+    res.json({ message: "Odhlášení proběhlo úspěšně." });
+  } catch (error) {
+    res.status(500).json({ message: "Chyba serveru." });
+  }
+});
+
 module.exports = router;
