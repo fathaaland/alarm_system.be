@@ -8,14 +8,14 @@ const {
 } = require("../services/authService");
 const User = require("../models/User");
 
-// Registrace
+// Registration
 router.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
   try {
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ message: "Uživatel již existuje." });
+      return res.status(400).json({ message: "User is already exist." });
     }
 
     user = new User({ email, password });
@@ -27,60 +27,60 @@ router.post("/register", async (req, res) => {
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
 
-    // Uložení refresh tokenu do databáze
+    // Save refresh token to database
     user.refreshToken = refreshToken;
     await user.save();
 
     res.json({ accessToken, refreshToken });
   } catch (error) {
-    res.status(500).json({ message: "Chyba serveru." });
+    res.status(500).json({ message: "Internal server error." });
   }
 });
 
-// Přihlášení
+// Login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "Neplatné přihlašovací údaje." });
+      return res.status(400).json({ message: "Invalid login credentials." });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Neplatné přihlašovací údaje." });
+      return res.status(400).json({ message: "Invalid login credentials." });
     }
 
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
 
-    // Uložení refresh tokenu do databáze
+    // Safe refresh token to database
     user.refreshToken = refreshToken;
     await user.save();
 
     res.json({ accessToken, refreshToken });
   } catch (error) {
-    res.status(500).json({ message: "Chyba serveru." });
+    res.status(500).json({ message: "Internal server error." });
   }
 });
 
-// Refresh tokenu
+// Refresh token
 router.post("/refresh-token", async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    return res.status(401).json({ message: "Refresh token chybí." });
+    return res.status(401).json({ message: "Refresh token is missing." });
   }
 
   try {
-    // Ověření refresh tokenu
+    // Verify refresh token
     const decoded = verifyRefreshToken(refreshToken);
 
-    // Najděte uživatele podle ID v refresh tokenu
+    // Find user by id and refresh token
     const user = await User.findById(decoded.id);
     if (!user || user.refreshToken !== refreshToken) {
-      return res.status(403).json({ message: "Neplatný refresh token." });
+      return res.status(403).json({ message: "Invalid refresh token." });
     }
 
     // Vygenerujte nový access token
@@ -88,7 +88,7 @@ router.post("/refresh-token", async (req, res) => {
 
     res.json({ accessToken });
   } catch (error) {
-    res.status(403).json({ message: "Neplatný refresh token." });
+    res.status(403).json({ message: "Invalid refresh token." });
   }
 });
 
@@ -98,13 +98,13 @@ router.post("/logout", async (req, res) => {
   try {
     const user = await User.findOne({ refreshToken });
     if (user) {
-      user.refreshToken = null; // Smažte refresh token
+      user.refreshToken = null; // Delete refresh token
       await user.save();
     }
 
-    res.json({ message: "Odhlášení proběhlo úspěšně." });
+    res.json({ message: "Logout was sucsesfull." });
   } catch (error) {
-    res.status(500).json({ message: "Chyba serveru." });
+    res.status(500).json({ message: "Internal server error." });
   }
 });
 

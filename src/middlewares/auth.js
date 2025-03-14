@@ -6,7 +6,7 @@ const auth = (req, res, next) => {
   if (!token) {
     return res
       .status(401)
-      .json({ message: "Access denied. The token is missing." });
+      .json({ message: "Access denied. Token is missing." });
   }
 
   try {
