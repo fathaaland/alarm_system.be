@@ -37,4 +37,32 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// Přihlášení
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Neplatné přihlašovací údaje." });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Neplatné přihlašovací údaje." });
+    }
+
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
+
+    // Uložení refresh tokenu do databáze
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    res.json({ accessToken, refreshToken });
+  } catch (error) {
+    res.status(500).json({ message: "Chyba serveru." });
+  }
+});
+
 module.exports = router;
