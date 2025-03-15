@@ -65,4 +65,31 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Refresh tokenu
+router.post("/refresh-token", async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: "Refresh token chybí." });
+  }
+
+  try {
+    // Ověření refresh tokenu
+    const decoded = verifyRefreshToken(refreshToken);
+
+    // Najděte uživatele podle ID v refresh tokenu
+    const user = await User.findById(decoded.id);
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(403).json({ message: "Neplatný refresh token." });
+    }
+
+    // Vygenerujte nový access token
+    const accessToken = generateAccessToken(user.id);
+
+    res.json({ accessToken });
+  } catch (error) {
+    res.status(403).json({ message: "Neplatný refresh token." });
+  }
+});
+
 module.exports = router;
