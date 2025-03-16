@@ -15,7 +15,7 @@ router.post("/register", async (req, res) => {
   try {
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ message: "User is already exist." });
+      return res.status(400).json({ message: "User already exists." });
     }
 
     user = new User({ email, password });
@@ -27,7 +27,7 @@ router.post("/register", async (req, res) => {
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
 
-    // Save refresh token to database
+    // Uložení refresh tokenu do databáze (správný název pole)
     user.refreshToken = refreshToken;
     await user.save();
 

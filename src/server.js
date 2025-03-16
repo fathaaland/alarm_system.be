@@ -3,12 +3,14 @@ const app = express();
 const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const authRoutes = require("./routes/authRoutes");
 
 dotenv.config();
+
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 3000;
+app.use("/auth", authRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -19,6 +21,7 @@ app.get("/", (req, res) => {
   res.send("Server is running");
 });
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
