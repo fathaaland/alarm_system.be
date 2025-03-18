@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { deviceDB } = require("../db/dbConnection"); // Připojení k "devices" DB
+const { deviceDB } = require("../db/dbConnection");
 
 const deviceSchema = new mongoose.Schema({
   device_name: {
@@ -20,7 +20,6 @@ const deviceSchema = new mongoose.Schema({
   },
 });
 
-// Model se vytvoří pomocí `deviceDB`
 const Device = deviceDB.model("Device", deviceSchema);
 
 module.exports = Device;
