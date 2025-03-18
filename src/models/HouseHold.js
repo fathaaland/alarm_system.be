@@ -1,6 +1,7 @@
+const mongoose = require("mongoose");
 const { householdDB } = require("../db/dbConnection");
 
-const householdSchema = new householdDB.Schema({
+const householdSchema = new mongoose.Schema({
   hh_name: {
     type: String,
     required: true,

@@ -1,6 +1,7 @@
-const { deviceDB } = require("../db/dbConnection");
+const mongoose = require("mongoose");
+const { deviceDB } = require("../db/dbConnection"); // Připojení k "devices" DB
 
-const deviceSchema = new deviceDB.Schema({
+const deviceSchema = new mongoose.Schema({
   device_name: {
     type: String,
     required: true,
@@ -19,6 +20,7 @@ const deviceSchema = new deviceDB.Schema({
   },
 });
 
+// Model se vytvoří pomocí `deviceDB`
 const Device = deviceDB.model("Device", deviceSchema);
 
 module.exports = Device;

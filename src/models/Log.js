@@ -1,6 +1,7 @@
+const mongoose = require("mongoose");
 const { logDB } = require("../db/dbConnection");
 
-const logSchema = new logDB.Schema({
+const logSchema = new mongoose.Schema({
   log_user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

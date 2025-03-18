@@ -1,7 +1,9 @@
-const { userDB } = require("../db/dbConnection");
+const mongoose = require("mongoose");
+const { userDB } = require("../db/dbConnection"); // Připojení k "users" DB
 const bcrypt = require("bcryptjs");
 
-const userSchema = new userDB.Schema({
+// Správné použití mongoose.Schema
+const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
@@ -21,7 +23,7 @@ const userSchema = new userDB.Schema({
   },
 });
 
-// Hash passwor before saving
+// Hashování hesla před uložením
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     const salt = await bcrypt.genSalt(10);
@@ -30,11 +32,12 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// Compare password method
+// Metoda na porovnání hesel
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
+// Model se vytváří pomocí `userDB`, což zajistí uložení do správné databáze
 const User = userDB.model("User", userSchema);
 
 module.exports = User;
