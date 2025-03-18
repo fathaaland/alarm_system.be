@@ -1,4 +1,4 @@
-const { householdDB } = require("../dbConnections");
+const { householdDB } = require("../db/dbConnection");
 
 const householdSchema = new householdDB.Schema({
   hh_name: {

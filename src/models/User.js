@@ -1,4 +1,4 @@
-const { userDB } = require("../dbConnections");
+const { userDB } = require("../db/dbConnection");
 const bcrypt = require("bcryptjs");
 
 const userSchema = new userDB.Schema({

@@ -1,4 +1,4 @@
-const { logDB } = require("../dbConnections");
+const { logDB } = require("../db/dbConnection");
 
 const logSchema = new logDB.Schema({
   log_user_id: {
