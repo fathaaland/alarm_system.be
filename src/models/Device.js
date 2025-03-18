@@ -1,19 +1,24 @@
-const mongoose = require("mongoose");
+const { deviceDB } = require("../db/dbConnection");
 
-const deviceSchema = new mongoose.Schema({
+const deviceSchema = new deviceDB.Schema({
   device_name: {
     type: String,
     required: true,
-    unique: true,
   },
   device_type: {
     type: String,
     required: true,
   },
-  current_state: {
-    type: Number,
-    default: 0,
+  device_household: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Household",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
-module.exports = mongoose.model("Device", deviceSchema);
+const Device = deviceDB.model("Device", deviceSchema);
+
+module.exports = Device;

@@ -1,28 +1,20 @@
-const mongoose = require("mongoose");
+const { logDB } = require("../dbConnections");
 
-const logSchema = new mongoose.Schema({
-  log_user_id: {
+const logSchema = new logDB.Schema({
+  message: {
     type: String,
     required: true,
   },
-
-  log_device_id: {
+  level: {
     type: String,
     required: true,
   },
-
-  log_type: {
-    type: String,
-    required: true,
-  },
-  log_message: {
-    type: String,
-    required: true,
-  },
-  log_date: {
+  timestamp: {
     type: Date,
     default: Date.now,
   },
 });
 
-module.exports = mongoose.model("Log", logSchema);
+const Log = logDB.model("Log", logSchema);
+
+module.exports = Log;
