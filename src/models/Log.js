@@ -1,15 +1,25 @@
 const { logDB } = require("../dbConnections");
 
 const logSchema = new logDB.Schema({
-  message: {
+  log_user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+
+  log_device_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Device",
+  },
+
+  log_type: {
     type: String,
     required: true,
   },
-  level: {
+  log_message: {
     type: String,
     required: true,
   },
-  timestamp: {
+  log_date: {
     type: Date,
     default: Date.now,
   },

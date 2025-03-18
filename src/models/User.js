@@ -21,7 +21,7 @@ const userSchema = new userDB.Schema({
   },
 });
 
-// Hashování hesla před uložením
+// Hash passwor before saving
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     const salt = await bcrypt.genSalt(10);
@@ -30,7 +30,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// Metoda pro porovnání hesel
+// Compare password method
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
