@@ -26,6 +26,15 @@ const householdSchema = new mongoose.Schema({
       ref: "Device",
     },
   ],
+  current_state: {
+    type: String,
+    default: "active",
+  },
+  trigger_alarm: {
+    type: Boolean,
+    default: false,
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,

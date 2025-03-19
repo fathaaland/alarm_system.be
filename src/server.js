@@ -4,7 +4,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
-const { userDB, householdDB, deviceDB, logDB } = require("./db/dbConnection");
+require("./db/dbConnection");
 
 dotenv.config();
 
