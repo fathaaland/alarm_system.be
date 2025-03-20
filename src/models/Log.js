@@ -6,12 +6,10 @@ const logSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-
   log_device_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Device",
   },
-
   log_type: {
     type: String,
     required: true,
