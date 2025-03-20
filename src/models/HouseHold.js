@@ -6,10 +6,6 @@ const householdSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  hh_password: {
-    type: String,
-    required: true,
-  },
   hh_admin: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -30,7 +26,7 @@ const householdSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  alarm_triggerd: {
+  alarm_triggered: {
     type: Boolean,
     default: false,
   },
