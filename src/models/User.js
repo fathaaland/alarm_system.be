@@ -12,6 +12,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  household: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Household",
+    default: null,
+  },
   refreshToken: {
     type: String,
     default: null,

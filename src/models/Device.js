@@ -10,10 +10,6 @@ const deviceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  device_household: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Household",
-  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -1,3 +1,4 @@
+require("dotenv").config({ path: "./.env" });
 const mongoose = require("mongoose");
 
 const connectToDB = (uri, dbName) => {
@@ -17,6 +18,11 @@ const connectToDB = (uri, dbName) => {
 
   return connection;
 };
+
+console.log("🔍 Debug: MONGO_USER_URI =", process.env.MONGO_USER_URI);
+console.log("🔍 Debug: MONGO_HOUSEHOLD_URI =", process.env.MONGO_HOUSEHOLD_URI);
+console.log("🔍 Debug: MONGO_DEVICE_URI =", process.env.MONGO_DEVICE_URI);
+console.log("🔍 Debug: MONGO_LOG_URI =", process.env.MONGO_LOG_URI);
 
 const userDB = connectToDB(process.env.MONGO_USER_URI, "users");
 const householdDB = connectToDB(process.env.MONGO_HOUSEHOLD_URI, "household");
