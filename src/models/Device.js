@@ -12,7 +12,7 @@ const deviceSchema = new mongoose.Schema({
   },
   active: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   alarm_triggered: {
     type: Number,
