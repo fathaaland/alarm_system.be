@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     default: "public",
   },
-  Households: [
+  households: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Household",
