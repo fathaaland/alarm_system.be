@@ -1,8 +1,13 @@
 const mongoose = require("mongoose");
 const { userDB } = require("../db/dbConnection");
 const bcrypt = require("bcryptjs");
+const Household = require("./HouseHold");
 
 const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
   email: {
     type: String,
     required: true,
@@ -12,11 +17,17 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  household: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Household",
-    default: null,
+  role: {
+    type: String,
+    required: true,
+    default: "public",
   },
+  Households: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Household",
+    },
+  ],
   refreshToken: {
     type: String,
     default: null,
