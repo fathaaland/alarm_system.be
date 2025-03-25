@@ -6,10 +6,6 @@ const householdSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  password: {
-    type: String,
-    required: true,
-  },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -18,7 +14,13 @@ const householdSchema = new mongoose.Schema({
   {
     type: Object,
     required: false
-  },
+  }
+],
+  members: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   ],
   createdAt: {
     type: Date,
