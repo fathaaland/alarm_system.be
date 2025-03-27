@@ -1,23 +1,58 @@
-const houseHold = require("../models/householdModel");
-const houseHoldService = require("../services/householdService");
+const User = require("../models/User");
+const householdService = require("../services/householdService");
+const { isValidObjectId } = require("mongoose");
 
-// Create a new household
 exports.createHousehold = async (req, res) => {
   try {
-    const name = req.body.name;
-    const ownerId = req.body.ownerId;
+    const { name, members = [], devices = [] } = req.body;
+    const ownerId = req.user.id;
 
-    const newHouseHold = await houseHoldService.createHouseHold(name, ownerId);
+    // Name validation
+    if (!name || typeof name !== "string" || name.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid household name is required",
+      });
+    }
+
+    // OwnerId validation
+    if (!isValidObjectId(ownerId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid owner ID",
+      });
+    }
+
+    // Is Existing owner ownerId validation
+    const ownerExists = await User.findById(ownerId);
+    if (!ownerExists) {
+      return res.status(404).json({
+        success: false,
+        message: "Owner not found",
+      });
+    }
+
+    const newHousehold = await householdService.createHousehold({
+      name: name.trim(),
+      ownerId,
+      members: [ownerId, ...members],
+      devices: [],
+      logs: [],
+    });
 
     res.status(201).json({
-      succsess: true,
+      success: true,
+      data: newHousehold,
       message: "Household created successfully",
-      data: newHouseHold,
     });
-  } catch (err) {
+  } catch (error) {
+    console.error("Error creating household:", error);
+
     res.status(500).json({
       success: false,
-      message: err.message,
+      message: error.message || "Internal server error",
     });
   }
 };
+
+module.exports = householdController;
