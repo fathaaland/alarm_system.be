@@ -2,34 +2,31 @@ const mongoose = require("mongoose");
 const { householdDB } = require("../db/dbConnection");
 
 const householdSchema = new mongoose.Schema({
-  hh_name: {
+  name: {
     type: String,
     required: true,
   },
-  hh_admin: {
+  ownerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  hh_members: [
+  members: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
   ],
-  hh_devices: [
+  devices: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Device",
     },
   ],
-  active: {
-    type: Boolean,
-    default: false,
-  },
-  alarm_triggered: {
-    type: Boolean,
-    default: false,
-  },
+  logs: [
+    {
+      type: Object,
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

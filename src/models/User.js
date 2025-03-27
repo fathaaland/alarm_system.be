@@ -3,19 +3,27 @@ const { userDB } = require("../db/dbConnection");
 const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
-  email: {
+  firstName: {
     type: String,
     required: true,
-    unique: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
   },
   password: {
     type: String,
     required: true,
   },
-  household: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Household",
-    default: null,
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: ["owner", "user"],
+    default: "user",
   },
   refreshToken: {
     type: String,
