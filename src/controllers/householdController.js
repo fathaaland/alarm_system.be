@@ -1,5 +1,6 @@
-const User = require("../models/User");
 const householdService = require("../services/householdService");
+const User = require("../models/User");
+
 const { isValidObjectId } = require("mongoose");
 
 exports.createHousehold = async (req, res) => {
