@@ -6,27 +6,30 @@ const householdSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  ownerId: {
+  hh_admin: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  members: [
+  hh_members: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
   ],
-  devices: [
+  hh_devices: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Device",
     },
   ],
-  logs: [
-    {
-      type: Object,
-    },
-  ],
+  active: {
+    type: Boolean,
+    default: false,
+  },
+  alarm_triggered: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
