@@ -1,4 +1,4 @@
-const householdService = require("../services/householdService");
+const householdService = require("../services/householdServices");
 const User = require("../models/User");
 
 const { isValidObjectId } = require("mongoose");
@@ -56,4 +56,4 @@ exports.createHousehold = async (req, res) => {
   }
 };
 
-module.exports = householdController;
+module.exports = exports;

@@ -16,3 +16,5 @@ exports.createHousehold = async (householdData) => {
     throw error;
   }
 };
+
+module.exports = exports;

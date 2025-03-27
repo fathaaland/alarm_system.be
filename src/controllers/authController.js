@@ -46,6 +46,7 @@ const register = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        password: user.password,
         role: user.role,
       },
     });

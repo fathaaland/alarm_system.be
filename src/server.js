@@ -6,12 +6,15 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 
 const authRoutes = require("./routes/authRoutes");
+const householdRoutes = require("./routes/householdRoutes");
+const { householdDB } = require("./db/dbConnection");
 require("./db/dbConnection");
 
 app.use(cors());
 app.use(express.json());
 
 app.use("/auth", authRoutes);
+app.use("/household", householdRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
