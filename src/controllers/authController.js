@@ -8,12 +8,12 @@ const User = require("../models/User");
 
 // Register
 const register = async (req, res) => {
-  const { email, password } = req.body;
+  const { firstName, lastName, email, password, role = "user" } = req.body;
 
-  if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: "Email and password are required." });
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({
+      message: "First name, last name, email and password are required.",
+    });
   }
 
   try {
@@ -22,8 +22,15 @@ const register = async (req, res) => {
       return res.status(400).json({ message: "User already exists." });
     }
 
-    user = new User({ email, password });
-    await user.save(); // Middleware will hase the password
+    user = new User({
+      firstName,
+      lastName,
+      email,
+      password,
+      role,
+    });
+
+    await user.save(); // Middleware will hash the password
 
     const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
@@ -31,7 +38,17 @@ const register = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.json({ accessToken, refreshToken });
+    res.json({
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error." });
@@ -51,16 +68,12 @@ const login = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .json({ message: "Invalid login email credentials." });
+      return res.status(400).json({ message: "Invalid login credentials." });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res
-        .status(400)
-        .json({ message: "Invalid login password credentials." });
+      return res.status(400).json({ message: "Invalid login credentials." });
     }
 
     const accessToken = generateAccessToken(user.id);
@@ -69,7 +82,17 @@ const login = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
-    res.json({ accessToken, refreshToken });
+    res.json({
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error." });
@@ -87,12 +110,22 @@ const refreshToken = async (req, res) => {
   try {
     const decoded = verifyRefreshToken(refreshToken);
     const user = await User.findById(decoded.id);
+
     if (!user || user.refreshToken !== refreshToken) {
       return res.status(403).json({ message: "Invalid refresh token." });
     }
 
     const accessToken = generateAccessToken(user.id);
-    res.json({ accessToken });
+    res.json({
+      accessToken,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.error(error);
     res.status(403).json({ message: "Invalid refresh token." });
