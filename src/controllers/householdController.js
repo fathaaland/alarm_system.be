@@ -56,4 +56,23 @@ exports.createHousehold = async (req, res) => {
   }
 };
 
+exports.getHousehold = async (req, res) => {
+  try {
+    const household = await householdService.getHousehold(req.user.ownerId);
+
+    res.status(200).json({
+      message: true,
+      data: household,
+    });
+  } catch (error) {
+    console.log("Error fetching fucking data", error);
+
+    const statusCode = error.message.includes("not found") ? 404 : 500;
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = exports;
