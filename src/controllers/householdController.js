@@ -75,4 +75,24 @@ exports.getHousehold = async (req, res) => {
   }
 };
 
+exports.deleteHousehold = async (req, res) => {
+  try {
+    const household = await householdService.deleteHousehold(
+      req.user.householdId
+    );
+    res.status(200).json({
+      message: true,
+      data: household,
+    });
+  } catch (error) {
+    console.log("Error deleting household.", error);
+
+    const statusCode = error.message.includes("not found") ? 404 : 500;
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = exports;
