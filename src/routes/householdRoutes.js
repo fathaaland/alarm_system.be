@@ -5,6 +5,10 @@ const authMiddleware = require("../middlewares/auth");
 
 router.post("/create", authMiddleware, householdController.createHousehold);
 router.get("/", authMiddleware, householdController.getHousehold);
-router.delete("/delete", authMiddleware, householdController.deleteHousehold);
+router.delete(
+  "/delete/:id",
+  authMiddleware,
+  householdController.deleteHousehold
+);
 
 module.exports = router;

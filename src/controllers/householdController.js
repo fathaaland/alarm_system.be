@@ -58,7 +58,7 @@ exports.createHousehold = async (req, res) => {
 
 exports.getHousehold = async (req, res) => {
   try {
-    const household = await householdService.getHousehold(req.user.ownerId);
+    const household = await householdService.getHousehold(req.user.id);
 
     res.status(200).json({
       message: true,
