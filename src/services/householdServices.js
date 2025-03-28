@@ -30,4 +30,20 @@ exports.getHousehold = async (userId) => {
   }
 };
 
+exports.deleteHousehold = async (householdId) => {
+  try {
+    const household = await Household.findOne({ _id: householdId });
+
+    if (!household) {
+      throw new Error(
+        "Household not found or you don't have rights for this action."
+      );
+    }
+
+    return household;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = exports;
