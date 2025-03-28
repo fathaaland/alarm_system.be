@@ -4,5 +4,6 @@ const householdController = require("../controllers/householdController");
 const authMiddleware = require("../middlewares/auth");
 
 router.post("/create", authMiddleware, householdController.createHousehold);
+router.get("/", authMiddleware, householdController.getHousehold);
 
 module.exports = router;
