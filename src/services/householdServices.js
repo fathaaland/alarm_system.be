@@ -17,4 +17,20 @@ exports.createHousehold = async (householdData) => {
   }
 };
 
+exports.getHousehold = async (ownerId) => {
+  try {
+    const household = await Household.findOne({
+      ownerId: userId,
+    });
+
+    if (!household) {
+      throw new Error("Household not found or you don't have access");
+    }
+
+    return household;
+  } catch (error) {
+    throw new error();
+  }
+};
+
 module.exports = exports;
