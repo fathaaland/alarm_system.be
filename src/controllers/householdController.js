@@ -77,12 +77,17 @@ exports.getHousehold = async (req, res) => {
 
 exports.deleteHousehold = async (req, res) => {
   try {
-    const household = await householdService.deleteHousehold(
-      req.user.householdId
+    const userId = req.user.id;
+    const householdId = req.params.id;
+
+    const deleteHousehold = await householdService.deleteHousehold(
+      householdId,
+      userId
     );
     res.status(200).json({
       message: true,
-      data: household,
+      data: deleteHousehold,
+      message: "Household deleted successfully",
     });
   } catch (error) {
     console.log("Error deleting household.", error);
