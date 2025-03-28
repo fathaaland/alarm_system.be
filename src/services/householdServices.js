@@ -17,11 +17,9 @@ exports.createHousehold = async (householdData) => {
   }
 };
 
-exports.getHousehold = async (ownerId) => {
+exports.getHousehold = async (userId) => {
   try {
-    const household = await Household.findOne({
-      ownerId: userId,
-    });
+    const household = await Household.findOne({ ownerId: userId });
 
     if (!household) {
       throw new Error("Household not found or you don't have access");
@@ -29,7 +27,7 @@ exports.getHousehold = async (ownerId) => {
 
     return household;
   } catch (error) {
-    throw new error();
+    throw error;
   }
 };
 
