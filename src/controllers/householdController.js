@@ -85,9 +85,8 @@ exports.deleteHousehold = async (req, res) => {
       userId
     );
     res.status(200).json({
-      message: true,
+      message: "Household was deleted successfully",
       data: deleteHousehold,
-      message: "Household deleted successfully",
     });
   } catch (error) {
     console.log("Error deleting household.", error);
