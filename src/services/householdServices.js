@@ -19,13 +19,13 @@ exports.createHousehold = async (householdData) => {
 
 exports.getHousehold = async (userId) => {
   try {
-    const household = await Household.findOne({
+    const households = await Household.find({
       $or: [{ ownerId: userId }, { members: userId }],
     });
-    if (!household) {
-      throw new Error("Household not found or you don't have access");
+    if (!households || households.length === 0) {
+      throw new Error("No households found or you don't have access");
     }
-    return household;
+    return households;
   } catch (error) {
     throw error;
   }
