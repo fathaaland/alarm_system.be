@@ -6,6 +6,7 @@ const authMiddleware = require("../middlewares/auth");
 router.post("/create", authMiddleware, householdController.createHousehold);
 
 router.get("/", authMiddleware, householdController.getHousehold);
+router.get("/:id", authMiddleware, householdController.getHouseholdById);
 
 router.delete(
   "/delete/:id",

@@ -1,18 +1,19 @@
 const householdService = require("../services/householdServices");
 const User = require("../models/User");
-
 const { isValidObjectId } = require("mongoose");
 
 exports.createHousehold = async (req, res) => {
   try {
-    const { name, members = [], devices = [] } = req.body;
-    const ownerId = req.user.id;
+    console.log("Request body:", req.body);
+    console.log("User from token:", req.user);
 
-    // Name validation
-    if (!name || typeof name !== "string" || name.trim().length === 0) {
-      return res.status(400).json({
+    const { name, members = [], devices = [] } = req.body;
+    const ownerId = req.user?.id;
+
+    if (!ownerId) {
+      return res.status(401).json({
         success: false,
-        message: "Valid household name is required",
+        message: "Unauthorized - invalid user token",
       });
     }
 
@@ -22,24 +23,6 @@ exports.createHousehold = async (req, res) => {
         success: false,
         message: "Invalid owner ID",
       });
-    }
-
-    // Members validation
-    for (const memberId of members) {
-      if (!isValidObjectId(memberId)) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid member ID",
-        });
-      }
-
-      const memberExists = await User.findById(memberId);
-      if (!memberExists) {
-        return res.status(404).json({
-          success: false,
-          message: `Member with ID ${memberId} not found`,
-        });
-      }
     }
 
     // Is Existing owner ownerId validation
@@ -54,7 +37,7 @@ exports.createHousehold = async (req, res) => {
     const newHousehold = await householdService.createHousehold({
       name: name.trim(),
       ownerId,
-      members: [ownerId, ...members],
+      members: [],
       devices: [],
       logs: [],
     });
@@ -79,7 +62,7 @@ exports.getHousehold = async (req, res) => {
     const household = await householdService.getHousehold(req.user.id);
 
     res.status(200).json({
-      message: true,
+      success: true,
       data: household,
     });
   } catch (error) {
@@ -116,5 +99,3 @@ exports.deleteHousehold = async (req, res) => {
     });
   }
 };
-
-module.exports = exports;

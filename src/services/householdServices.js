@@ -31,6 +31,23 @@ exports.getHousehold = async (userId) => {
   }
 };
 
+exports.getHouseholdById = async (householdId, userId) => {
+  try {
+    const household = await Household.findOne({
+      _id: householdId,
+      $or: [{ ownerId: userId }, { members: userId }],
+    });
+
+    if (!household) {
+      throw new Error("Household not found or you don't have access");
+    }
+
+    return household;
+  } catch (error) {
+    throw error;
+  }
+};
+
 exports.deleteHousehold = async (householdId, userId) => {
   try {
     const household = await Household.findOne({
