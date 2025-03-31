@@ -24,6 +24,24 @@ exports.createHousehold = async (req, res) => {
       });
     }
 
+    // Members validation
+    for (const memberId of members) {
+      if (!isValidObjectId(memberId)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid member ID",
+        });
+      }
+
+      const memberExists = await User.findById(memberId);
+      if (!memberExists) {
+        return res.status(404).json({
+          success: false,
+          message: `Member with ID ${memberId} not found`,
+        });
+      }
+    }
+
     // Is Existing owner ownerId validation
     const ownerExists = await User.findById(ownerId);
     if (!ownerExists) {
