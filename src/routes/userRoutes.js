@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const householdController = require("../controllers/householdController");
+const householdController = require("../controllers/userController");
 const authMiddleware = require("../middlewares/auth");
 
 router.get("/", authMiddleware, householdController.getHousehold);
