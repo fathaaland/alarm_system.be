@@ -14,16 +14,4 @@ router.delete(
   householdController.deleteHousehold
 );
 
-// router.put(
-//   "/add-user/:id",
-//   authMiddleware,
-//   householdController.addUserHousehold
-// );
-
-// router.put(
-//   "/remove-user/:id",
-//   authMiddleware,
-//   householdController.removeUserHousehold
-// );
-
 module.exports = router;
