@@ -1,6 +1,6 @@
 const Device = require("../models/Device");
 
-exports.device = async (deviceData) => {
+exports.createDevice = async (deviceData) => {
   try {
     const newDevice = new Device({
       name: deviceData.name,
