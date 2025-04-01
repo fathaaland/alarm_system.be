@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Household = require("../models/HouseHold");
 
 exports.createHousehold = async (householdData) => {
