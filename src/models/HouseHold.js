@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { householdDB } = require("../db/dbConnection");
+const logschema = require("./Log");
 
 const householdSchema = new mongoose.Schema({
   name: {
@@ -24,7 +25,7 @@ const householdSchema = new mongoose.Schema({
   ],
   logs: [
     {
-      type: Object,
+      type: logschema,
     },
   ],
   createdAt: {

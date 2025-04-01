@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
 const householdRoutes = require("./routes/householdRoutes");
 const userRoutes = require("./routes/userRoutes");
+const deviceRoutes = require("./routes/deviceRoutes");
 const { householdDB } = require("./db/dbConnection");
 require("./db/dbConnection");
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/household", householdRoutes);
 app.use("/user", userRoutes);
+app.use("/device", deviceRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
