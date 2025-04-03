@@ -52,4 +52,18 @@ exports.setAlarmTriggeredOn = async (deviceId) => {
   }
 };
 
+exports.setAlarmTriggeredOff = async (deviceId) => {
+  try {
+    const device = await Device.findById(deviceId);
+    if (!device) {
+      throw new Error("Device not found.");
+    }
+    device.alarm_triggered = 0;
+    await device.save();
+    return device;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = exports;
