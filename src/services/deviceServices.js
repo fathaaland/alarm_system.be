@@ -37,4 +37,19 @@ exports.deleteDevice = async (deviceId, ownerId) => {
     throw error;
   }
 };
+
+exports.setAlarmTriggeredOn = async (deviceId) => {
+  try {
+    const device = await Device.findById(deviceId);
+    if (!device) {
+      throw new Error("Device not found.");
+    }
+    device.alarm_triggered = 1;
+    await device.save();
+    return device;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = exports;
