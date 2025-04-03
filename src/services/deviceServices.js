@@ -17,11 +17,11 @@ exports.createDevice = async (deviceData) => {
   }
 };
 
-exports.deleteDevice = async (deviceId, userId) => {
+exports.deleteDevice = async (deviceId, ownerId) => {
   try {
     const household = await Household.findOne({
       _id: deviceId,
-      ownerId: userId,
+      ownerId: ownerId,
     });
 
     if (!household) {

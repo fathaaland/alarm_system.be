@@ -80,3 +80,55 @@ exports.createDevice = async (req, res) => {
     });
   }
 };
+
+exports.deleteDevice = async (req, res) => {
+  try {
+    const ownerId = req.user?.id;
+    const deviceId = req.params.id;
+
+    if (!isValidObjectId(deviceId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid device ID",
+      });
+    }
+
+    const device = await Device.findById(deviceId).populate("householdId");
+    if (!device) {
+      return res.status(404).json({
+        success: false,
+        message: "Device not found",
+      });
+    }
+
+    const household = await Household.findOne({
+      _id: device.householdId,
+      ownerId: ownerId,
+    });
+
+    if (!household) {
+      return res.status(403).json({
+        success: false,
+        message: "You don't have permission to delete this device",
+      });
+    }
+
+    await Device.deleteOne({ _id: deviceId });
+
+    household.devices = household.devices.filter(
+      (id) => id.toString() !== deviceId
+    );
+    await household.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Device deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting device:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
