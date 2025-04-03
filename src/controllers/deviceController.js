@@ -28,14 +28,13 @@ exports.createDevice = async (req, res) => {
       });
     }
 
-    // OwnerId validation
     if (!isValidObjectId(ownerId)) {
       return res.status(400).json({
         success: false,
         message: "Invalid owner ID",
       });
     }
-    // Input validation
+
     if (!householdId || !isValidObjectId(householdId)) {
       return res.status(400).json({
         success: false,
@@ -43,10 +42,9 @@ exports.createDevice = async (req, res) => {
       });
     }
 
-    // Checke if household exists and user is owner
     const household = await Household.findOne({
       _id: householdId,
-      $or: [{ ownerId: userId }],
+      $or: [{ ownerId: ownerId }],
     });
 
     if (!household) {
@@ -55,9 +53,10 @@ exports.createDevice = async (req, res) => {
         message: "Household not found or you don't have access",
       });
     }
+
     const newDevice = await deviceService.createDevice({
       name: name.trim(),
-      type: deviceType.trim(),
+      type: type.trim(),
       active,
       alarm_triggered,
       householdId,
@@ -75,7 +74,6 @@ exports.createDevice = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating device:", error);
-
     res.status(500).json({
       success: false,
       message: error.message || "Internal server error",
