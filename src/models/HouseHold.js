@@ -34,6 +34,10 @@ const householdSchema = new mongoose.Schema({
   },
 });
 
+if (householdDB.models.Household) {
+  delete householdDB.models.Household;
+}
+
 const Household = householdDB.model("Household", householdSchema);
 
 module.exports = Household;
