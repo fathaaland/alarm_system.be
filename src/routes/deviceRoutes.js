@@ -9,5 +9,25 @@ router.delete(
   authMiddleware,
   deviceController.deleteDevice
 );
+router.put(
+  "/device/set-alarm_triggered-on",
+  authMiddleware,
+  deviceController.setAlarmTriggeredOn
+);
+router.put(
+  "/device/set-alarm_triggered-off",
+  authMiddleware,
+  deviceController.setAlarmTriggeredOff
+);
+router.put(
+  "/device/set-state-active",
+  authMiddleware,
+  deviceController.setStateActive
+);
+router.put(
+  "/device/set-state-deactive",
+  authMiddleware,
+  deviceController.setStateDeactive
+);
 
 module.exports = router;
