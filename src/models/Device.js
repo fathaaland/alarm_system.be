@@ -18,6 +18,11 @@ const deviceSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  householdId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Household",
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
