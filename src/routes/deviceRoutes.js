@@ -10,15 +10,15 @@ router.delete(
   deviceController.deleteDevice
 );
 router.put(
-  "/set-alarm-triggered/:id",
+  "/set-alarm-triggered-on/:id",
   authMiddleware,
   deviceController.setAlarmTriggeredOn
 );
-// router.put(
-//   "/set-alarm_triggered-off",
-//   authMiddleware,
-//   deviceController.setAlarmTriggeredOff
-// );
+router.put(
+  "/set-alarm-triggered-off/:id",
+  authMiddleware,
+  deviceController.setAlarmTriggeredOff
+);
 // router.put(
 //   "/set-state-active",
 //   authMiddleware,
