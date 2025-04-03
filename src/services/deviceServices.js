@@ -17,4 +17,24 @@ exports.createDevice = async (deviceData) => {
   }
 };
 
+exports.deleteDevice = async (deviceId, userId) => {
+  try {
+    const household = await Household.findOne({
+      _id: deviceId,
+      ownerId: userId,
+    });
+
+    if (!household) {
+      throw new Error(
+        "Household not found or you don't have rights for this action."
+      );
+    }
+
+    await household.deleteOne({ _id: deviceId });
+
+    return household;
+  } catch (error) {
+    throw error;
+  }
+};
 module.exports = exports;
