@@ -66,4 +66,20 @@ exports.setAlarmTriggeredOff = async (deviceId) => {
   }
 };
 
+exports.setStateActive = async (householdId) => {
+  try {
+    const household = await Household.findById(householdId);
+    if (!household) {
+      throw new Error("Household not found.");
+    }
+    await household.map((device) => {
+      device.active = 1;
+      device.save();
+    });
+    return household;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = exports;

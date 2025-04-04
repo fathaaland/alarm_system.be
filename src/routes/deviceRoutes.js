@@ -19,11 +19,11 @@ router.put(
   authMiddleware,
   deviceController.setAlarmTriggeredOff
 );
-// router.put(
-//   "/set-state-active",
-//   authMiddleware,
-//   deviceController.setStateActive
-// );
+router.put(
+  "/set-state-active",
+  authMiddleware,
+  deviceController.setStateActive
+);
 // router.put(
 //   "/set-state-deactive",
 //   authMiddleware,
