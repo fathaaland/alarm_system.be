@@ -145,6 +145,13 @@ exports.setAlarmTriggeredOn = async (req, res) => {
       });
     }
 
+    if ((device.alarm_triggered = 1) && (device.active = true)) {
+      return res.status(400).json({
+        success: false,
+        message: "Alarm already triggered",
+      });
+    }
+
     const device = await Device.findById(deviceId);
     if (!device) {
       return res.status(404).json({
@@ -198,6 +205,13 @@ exports.setAlarmTriggeredOff = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Device not found",
+      });
+    }
+
+    if ((device.alarm_triggered = 0) && (device.active = true)) {
+      return res.status(400).json({
+        success: false,
+        message: "Alarm already is triggered off",
       });
     }
 
