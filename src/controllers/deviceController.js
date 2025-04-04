@@ -242,3 +242,49 @@ exports.setAlarmTriggeredOff = async (req, res) => {
     });
   }
 };
+
+exports.setStateActive = async (req, res) => {
+  try {
+    const ownerId = req.user?.id;
+    const householdId = req.body.householdId;
+
+    if (!isValidObjectId(householdId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid household ID",
+      });
+    }
+
+    const household = await Household.findOne({
+      _id: householdId,
+      ownerId: ownerId,
+    });
+
+    if (!household) {
+      return res.status(403).json({
+        success: false,
+        message: "Household not found or you don't have permission",
+      });
+    }
+
+    const devices = await Device.find({ householdId });
+
+    const updatePromises = devices.map((device) => {
+      device.active = 1;
+      return device.save();
+    });
+
+    await Promise.all(updatePromises);
+
+    res.status(200).json({
+      success: true,
+      data: devices,
+    });
+  } catch (error) {
+    console.error("Error setting state active:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};

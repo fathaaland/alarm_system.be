@@ -1,4 +1,5 @@
 const Device = require("../models/Device");
+const Household = require("../models/Household");
 
 exports.createDevice = async (deviceData) => {
   try {
@@ -73,7 +74,7 @@ exports.setStateActive = async (householdId) => {
       throw new Error("Household not found.");
     }
     await household.map((device) => {
-      device.active = 1;
+      device.active = true;
       device.save();
     });
     return household;
