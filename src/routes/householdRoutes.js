@@ -11,4 +11,10 @@ router.delete(
   householdController.deleteHousehold
 );
 
+router.put(
+  "/add-user/:id",
+  authMiddleware,
+  householdController.addUserToHousehold
+);
+
 module.exports = router;
