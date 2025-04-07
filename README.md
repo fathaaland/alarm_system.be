@@ -1,0 +1,36 @@
+1. Příprava projektu
+Naklonujte si repozitář:
+git clone [URL_repozitáře]
+
+Přepněte se do složky projektu:
+cd [název_složky]/src
+
+2. Instalace závislostí
+Nainstalujte potřebné balíčky:
+npm install
+
+Instalace dalších požadovaných balíčků:
+npm install nodemon express mongoose
+
+3. Nastavení databáze
+Vytvořte si účet na MongoDB Atlas
+
+Vytvořte novou databázi podle schématu v dokumentaci
+Zkopírujte connection string a vložte ho do .env souboru
+
+4. Spuštění projektu
+nodemon server.js
+
+Aplikace by měla běžet na:
+http://localhost:3000
+
+5. Testování
+Pro testování API můžete použít Postman nebo Insomnia
+
+Ukázkové requesty najdete v dokumentaci
+
+Důležité soubory
+.env - konfigurační soubor (je potřeba vytvořit) - NAPISTE A POSLU VAM HO!
+server.js - hlavní vstupní bod aplikace
+models/ - obsahuje databázové modely
+routes/ - definice API endpointů
