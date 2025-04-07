@@ -24,10 +24,10 @@ router.put(
   authMiddleware,
   deviceController.setStateActive
 );
-// router.put(
-//   "/set-state-deactive",
-//   authMiddleware,
-//   deviceController.setStateDeactive
-// );
+router.put(
+  "/set-state-deactive",
+  authMiddleware,
+  deviceController.setStateDeactive
+);
 
 module.exports = router;

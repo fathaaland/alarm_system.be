@@ -11,13 +11,7 @@ exports.createDevice = async (req, res) => {
     console.log("Request body:", req.body);
     console.log("User from token:", req.user);
 
-    const {
-      name,
-      type,
-      active = true,
-      alarm_triggered = 0,
-      householdId,
-    } = req.body;
+    const { name, type, active, alarm_triggered, householdId } = req.body;
 
     const ownerId = req.user?.id;
 
@@ -145,12 +139,12 @@ exports.setAlarmTriggeredOn = async (req, res) => {
       });
     }
 
-    if ((device.alarm_triggered = 1) && (device.active = true)) {
-      return res.status(400).json({
-        success: false,
-        message: "Alarm already triggered",
-      });
-    }
+    // if ((device.alarm_triggered = 1) && (device.active = true)) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Alarm already triggered",
+    //   });
+    // }
 
     const device = await Device.findById(deviceId);
     if (!device) {
@@ -270,7 +264,7 @@ exports.setStateActive = async (req, res) => {
     const devices = await Device.find({ householdId });
 
     const updatePromises = devices.map((device) => {
-      device.active = 1;
+      device.active = true;
       return device.save();
     });
 
@@ -282,6 +276,52 @@ exports.setStateActive = async (req, res) => {
     });
   } catch (error) {
     console.error("Error setting state active:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
+
+exports.setStateDeactive = async (req, res) => {
+  try {
+    const ownerId = req.user?.id;
+    const householdId = req.body.householdId;
+
+    if (!isValidObjectId(householdId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid household ID",
+      });
+    }
+
+    const household = await Household.findOne({
+      _id: householdId,
+      ownerId: ownerId,
+    });
+
+    if (!household) {
+      return res.status(403).json({
+        success: false,
+        message: "Household not found or you don't have permission",
+      });
+    }
+
+    const devices = await Device.find({ householdId });
+
+    const updatePromises = devices.map((device) => {
+      device.active = false;
+      return device.save();
+    });
+
+    await Promise.all(updatePromises);
+
+    res.status(200).json({
+      success: true,
+      data: devices,
+    });
+  } catch (error) {
+    console.error("Error setting state deactive:", error);
     res.status(500).json({
       success: false,
       message: error.message || "Internal server error",
