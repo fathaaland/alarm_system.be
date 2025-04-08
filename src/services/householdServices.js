@@ -65,4 +65,29 @@ exports.addUserToHousehold = async (householdId, userId, newUserId) => {
   }
 };
 
+exports.removeUserToHousehold = async (householdId, userId, newUserId) => {
+  try {
+    const household = await Household.findOne({
+      _id: householdId,
+      ownerId: userId,
+    });
+
+    if (!household) {
+      throw new Error(
+        "Household not found or you don't have rights for this action."
+      );
+    }
+
+    if (household.members.includes(newUserId)) {
+      throw new Error("User already deletes from the household.");
+    }
+
+    await household.save();
+
+    return household;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = exports;
