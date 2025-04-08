@@ -80,3 +80,46 @@ exports.deleteHousehold = async (req, res) => {
     });
   }
 };
+
+exports.addUserToHousehold = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const householdId = req.params.id;
+    const newUserId = req.body.newUserId;
+
+    if (!newUserId) {
+      return res.status(400).json({
+        success: false,
+        message: "New user ID is required",
+      });
+    }
+
+    User.map((user) => {
+      if (!isValidObjectId(user)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid user ID",
+        });
+      }
+    });
+
+    const addUser = await householdService.addUserToHousehold(
+      householdId,
+      userId,
+      newUserId
+    );
+
+    res.status(200).json({
+      message: "User was added to the household successfully",
+      data: addUser,
+    });
+  } catch (error) {
+    console.log("Error adding user to household.", error);
+
+    const statusCode = error.message.includes("not found") ? 404 : 500;
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
