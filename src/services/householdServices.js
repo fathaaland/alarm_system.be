@@ -65,7 +65,7 @@ exports.addUserToHousehold = async (householdId, userId, newUserId) => {
   }
 };
 
-exports.removeUserToHousehold = async (householdId, userId, newUserId) => {
+exports.removeUserToHousehold = async (householdId, deleteUserId) => {
   try {
     const household = await Household.findOne({
       _id: householdId,
@@ -81,6 +81,8 @@ exports.removeUserToHousehold = async (householdId, userId, newUserId) => {
     if (household.members.includes(newUserId)) {
       throw new Error("User already deletes from the household.");
     }
+
+    household.members.deleteOne({ _id: deleteUserId });
 
     await household.save();
 
