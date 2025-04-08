@@ -94,15 +94,6 @@ exports.addUserToHousehold = async (req, res) => {
       });
     }
 
-    User.map((user) => {
-      if (!isValidObjectId(user)) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid user ID",
-        });
-      }
-    });
-
     const addUser = await householdService.addUserToHousehold(
       householdId,
       userId,
@@ -115,6 +106,40 @@ exports.addUserToHousehold = async (req, res) => {
     });
   } catch (error) {
     console.log("Error adding user to household.", error);
+
+    const statusCode = error.message.includes("not found") ? 404 : 500;
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.removeUserToHousehold = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const householdId = req.params.id;
+    const deleteUserId = req.body.deleteUserId;
+
+    if (!deleteUserId) {
+      return res.status(400).json({
+        success: false,
+        message: "Delete user ID is required",
+      });
+    }
+
+    const removeUser = await householdService.removeUserToHousehold(
+      householdId,
+      userId,
+      deleteUserId
+    );
+
+    res.status(200).json({
+      message: "User was removed from the household successfully",
+      data: removeUser,
+    });
+  } catch (error) {
+    console.log("Error removing user from household.", error);
 
     const statusCode = error.message.includes("not found") ? 404 : 500;
     res.status(statusCode).json({

@@ -69,7 +69,7 @@ exports.removeUserToHousehold = async (householdId, deleteUserId) => {
   try {
     const household = await Household.findOne({
       _id: householdId,
-      ownerId: userId,
+      ownerId: deleteUserId,
     });
 
     if (!household) {
