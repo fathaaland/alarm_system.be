@@ -17,4 +17,9 @@ router.put(
   householdController.addUserToHousehold
 );
 
+router.put(
+  "/remove-user/:id",
+  authMiddleware,
+  householdController.removeUserToHousehold
+);
 module.exports = router;
