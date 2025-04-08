@@ -47,12 +47,9 @@ exports.getHouseholdById = async (req, res) => {
 
 exports.getWholeHouseholdById = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const householdId = req.params.id;
-
     const household = await householdService.getWholeHouseholdById(
-      householdId,
-      userId
+      req.params.id,
+      req.user.id
     );
 
     res.status(200).json({
@@ -60,9 +57,14 @@ exports.getWholeHouseholdById = async (req, res) => {
       data: household,
     });
   } catch (error) {
-    console.log("Error fetching whole household by ID", error);
+    console.error("Error fetching household:", error);
 
-    const statusCode = error.message.includes("not found") ? 404 : 500;
+    const statusCode = error.message.includes("not found")
+      ? 404
+      : error.message.includes("access")
+      ? 403
+      : 500;
+
     res.status(statusCode).json({
       success: false,
       message: error.message,

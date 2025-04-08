@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Household = require("../models/HouseHold");
+const Device = require("../models/Device");
 
 exports.user = async (userData) => {
   try {
@@ -54,8 +55,18 @@ exports.getWholeHouseholdById = async (householdId, userId) => {
   try {
     const household = await Household.findOne({
       _id: householdId,
-      ownerId: userId,
-    });
+      $or: [{ ownerId: userId }, { members: userId }],
+    })
+      .populate({
+        path: "members",
+        select: "firstName lastName email role",
+        model: User,
+      })
+      .populate({
+        path: "devices",
+        model: Device,
+        select: "name type active alarm_triggered createdAt",
+      });
 
     if (!household) {
       throw new Error("Household not found or you don't have access");
