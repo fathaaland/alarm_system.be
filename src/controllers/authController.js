@@ -39,6 +39,8 @@ const register = async (req, res) => {
     await user.save();
 
     res.json({
+      message: "User registered successfully.",
+      success: true,
       accessToken,
       refreshToken,
       user: {
@@ -84,6 +86,8 @@ const login = async (req, res) => {
     await user.save();
 
     res.json({
+      message: "Login successful.",
+      success: true,
       accessToken,
       refreshToken,
       user: {
@@ -118,6 +122,8 @@ const refreshToken = async (req, res) => {
 
     const accessToken = generateAccessToken(user.id);
     res.json({
+      message: "Access token refreshed successfully.",
+      success: true,
       accessToken,
       user: {
         id: user.id,
@@ -148,7 +154,7 @@ const logout = async (req, res) => {
       await user.save();
     }
 
-    res.json({ message: "Logout successful." });
+    res.json(200, { success: true }, { message: "Logout successful." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error." });

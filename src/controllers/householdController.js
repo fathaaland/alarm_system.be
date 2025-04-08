@@ -70,6 +70,7 @@ exports.deleteHousehold = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Household was deleted successfully",
+      data: deleteHousehold,
     });
   } catch (error) {
     console.log("Error deleting household.", error);

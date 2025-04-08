@@ -50,4 +50,21 @@ exports.getHouseholdById = async (householdId, userId) => {
   }
 };
 
+exports.getWholeHouseholdById = async (householdId, userId) => {
+  try {
+    const household = await Household.findOne({
+      _id: householdId,
+      ownerId: userId,
+    });
+
+    if (!household) {
+      throw new Error("Household not found or you don't have access");
+    }
+
+    return household;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = exports;
