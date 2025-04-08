@@ -25,9 +25,7 @@ exports.getHousehold = async (userId) => {
     const households = await Household.find({
       $or: [{ ownerId: userId }, { members: userId }],
     });
-    if (!households || households.length === 0) {
-      throw new Error("No households found or you don't have access");
-    }
+
     return households;
   } catch (error) {
     throw error;
