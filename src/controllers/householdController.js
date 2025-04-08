@@ -1,6 +1,7 @@
 const householdService = require("../services/householdServices");
 const User = require("../models/User");
 const { isValidObjectId } = require("mongoose");
+const mongoose = require("mongoose");
 
 exports.createHousehold = async (req, res) => {
   try {
@@ -67,8 +68,8 @@ exports.deleteHousehold = async (req, res) => {
       userId
     );
     res.status(200).json({
+      success: true,
       message: "Household was deleted successfully",
-      data: deleteHousehold,
     });
   } catch (error) {
     console.log("Error deleting household.", error);
@@ -115,33 +116,41 @@ exports.addUserToHousehold = async (req, res) => {
   }
 };
 
-exports.removeUserToHousehold = async (req, res) => {
+exports.removeUserFromHousehold = async (req, res) => {
   try {
     const userId = req.user.id;
     const householdId = req.params.id;
     const deleteUserId = req.body.deleteUserId;
 
-    if (!deleteUserId) {
+    if (!deleteUserId || !mongoose.Types.ObjectId.isValid(deleteUserId)) {
       return res.status(400).json({
         success: false,
-        message: "Delete user ID is required",
+        message: "Valid delete user ID is required",
       });
     }
 
-    const removeUser = await householdService.removeUserToHousehold(
+    const updatedHousehold = await householdService.removeUserFromHousehold(
       householdId,
       userId,
       deleteUserId
     );
 
     res.status(200).json({
+      success: true,
       message: "User was removed from the household successfully",
-      data: removeUser,
+      data: updatedHousehold,
     });
   } catch (error) {
-    console.log("Error removing user from household.", error);
+    console.error("Error removing user from household:", error);
 
-    const statusCode = error.message.includes("not found") ? 404 : 500;
+    const statusCode = error.message.includes("not found")
+      ? 404
+      : error.message.includes("rights")
+      ? 403
+      : error.message.includes("member")
+      ? 400
+      : 500;
+
     res.status(statusCode).json({
       success: false,
       message: error.message,

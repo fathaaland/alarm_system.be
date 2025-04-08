@@ -65,7 +65,11 @@ exports.addUserToHousehold = async (householdId, userId, newUserId) => {
   }
 };
 
-exports.removeUserToHousehold = async (householdId, deleteUserId, ownerId) => {
+exports.removeUserFromHousehold = async (
+  householdId,
+  ownerId,
+  deleteUserId
+) => {
   try {
     const household = await Household.findOne({
       _id: householdId,
@@ -87,7 +91,6 @@ exports.removeUserToHousehold = async (householdId, deleteUserId, ownerId) => {
     }
 
     household.members.splice(userIndex, 1);
-
     await household.save();
 
     return household;

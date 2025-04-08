@@ -20,6 +20,6 @@ router.put(
 router.put(
   "/remove-user/:id",
   authMiddleware,
-  householdController.removeUserToHousehold
+  householdController.removeUserFromHousehold
 );
 module.exports = router;
