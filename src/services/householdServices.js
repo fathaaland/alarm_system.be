@@ -65,11 +65,11 @@ exports.addUserToHousehold = async (householdId, userId, newUserId) => {
   }
 };
 
-exports.removeUserToHousehold = async (householdId, deleteUserId) => {
+exports.removeUserToHousehold = async (householdId, deleteUserId, ownerId) => {
   try {
     const household = await Household.findOne({
       _id: householdId,
-      ownerId: deleteUserId,
+      ownerId: ownerId,
     });
 
     if (!household) {
@@ -78,11 +78,15 @@ exports.removeUserToHousehold = async (householdId, deleteUserId) => {
       );
     }
 
-    if (household.members.includes(newUserId)) {
-      throw new Error("User already deletes from the household.");
+    const userIndex = household.members.findIndex(
+      (memberId) => memberId.toString() === deleteUserId
+    );
+
+    if (userIndex === -1) {
+      throw new Error("User is not a member of this household.");
     }
 
-    household.members.deleteOne({ _id: deleteUserId });
+    household.members.splice(userIndex, 1);
 
     await household.save();
 
