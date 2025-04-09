@@ -11,7 +11,8 @@ exports.createDevice = async (req, res) => {
     console.log("Request body:", req.body);
     console.log("User from token:", req.user);
 
-    const { name, type, active, alarm_triggered, householdId } = req.body;
+    const { name, type, active, alarm_triggered, householdId, hw_id } =
+      req.body;
 
     const ownerId = req.user?.id;
 
@@ -54,6 +55,7 @@ exports.createDevice = async (req, res) => {
       active,
       alarm_triggered,
       householdId,
+      hw_id,
     });
 
     console.log("New device:", newDevice);
@@ -130,23 +132,16 @@ exports.deleteDevice = async (req, res) => {
 exports.setAlarmTriggeredOn = async (req, res) => {
   try {
     const ownerId = req.user?.id;
-    const deviceId = req.params.id;
+    const hwId = req.params.id;
 
-    if (!isValidObjectId(deviceId)) {
+    if (!isValidObjectId(hwId)) {
       return res.status(400).json({
         success: false,
         message: "Invalid device ID",
       });
     }
 
-    // if ((device.alarm_triggered = 1) && (device.active = true)) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Alarm already triggered",
-    //   });
-    // }
-
-    const device = await Device.findById(deviceId);
+    const device = await Device.findById(hwId);
     if (!device) {
       return res.status(404).json({
         success: false,

@@ -22,4 +22,10 @@ router.put(
   authMiddleware,
   householdController.removeUserFromHousehold
 );
+
+router.put(
+  "/update-name/:id",
+  authMiddleware,
+  householdController.updateHouseholdName
+);
 module.exports = router;

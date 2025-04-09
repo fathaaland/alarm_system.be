@@ -9,6 +9,7 @@ exports.createDevice = async (deviceData) => {
       active: deviceData.active,
       alarm_triggered: deviceData.alarm_triggered,
       householdId: deviceData.householdId,
+      hw_id: deviceData.hw_id,
     });
 
     await newDevice.save();
@@ -39,9 +40,9 @@ exports.deleteDevice = async (deviceId, ownerId) => {
   }
 };
 
-exports.setAlarmTriggeredOn = async (deviceId) => {
+exports.setAlarmTriggeredOn = async (hwId) => {
   try {
-    const device = await Device.findById(deviceId);
+    const device = await Device.findById(hwId);
     if (!device) {
       throw new Error("Device not found.");
     }
@@ -53,9 +54,9 @@ exports.setAlarmTriggeredOn = async (deviceId) => {
   }
 };
 
-exports.setAlarmTriggeredOff = async (deviceId) => {
+exports.setAlarmTriggeredOff = async (hwId) => {
   try {
-    const device = await Device.findById(deviceId);
+    const device = await Device.findById(hwId);
     if (!device) {
       throw new Error("Device not found.");
     }
