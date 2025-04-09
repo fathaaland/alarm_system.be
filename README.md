@@ -1,17 +1,18 @@
 1. Příprava projektu
-Naklonujte si repozitář: git clone git@github.com:fathaaland/alarm_system.be.git
+Naklonujte si repozitář:
+git clone git@github.com:fathaaland/alarm_system.be.git
 Přepněte se do složky projektu: cd src
 
-2. Instalace závislostí
+3. Instalace závislostí
 Nainstalujte potřebné balíčky: npm install
 Instalace dalších požadovaných balíčků: npm install nodemon express mongoose
 
-3. Nastavení databáze Vytvořte si účet na MongoDB Atlas. Zkopírujte connection string a vložte ho do .env souboru
+4. Nastavení databáze Vytvořte si účet na MongoDB Atlas. Zkopírujte connection string a vložte ho do .env souboru
 
-4. Spuštění projektu: nodemon server.js
+5. Spuštění projektu: nodemon server.js
 Aplikace by měla běžet na: http://localhost:3000
 
-5. Testování
+6. Testování
 Pro testování API můžete použít Postman nebo Insomnia
 
 Důležité soubory
