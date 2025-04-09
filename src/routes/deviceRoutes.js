@@ -10,9 +10,9 @@ router.delete(
   deviceController.deleteDevice
 );
 router.put(
-  "/set-alarm-triggered-on/:id",
+  "/set-alarm-triggered-on/:hwId",
   authMiddleware,
-  deviceController.setAlarmTriggeredOn
+  deviceController.setAlarmTriggeredOnByHwId
 );
 router.put(
   "/set-alarm-triggered-off/:id",

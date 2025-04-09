@@ -40,14 +40,25 @@ exports.deleteDevice = async (deviceId, ownerId) => {
   }
 };
 
-exports.setAlarmTriggeredOn = async (hwId) => {
+exports.setAlarmTriggeredOnByHwId = async (hwId, ownerId) => {
   try {
-    const device = await Device.findById(hwId);
+    const device = await Device.findOne({ hw_id: hwId });
     if (!device) {
-      throw new Error("Device not found.");
+      throw new Error("Device not found");
     }
+
+    const household = await Household.findOne({
+      _id: device.householdId,
+      ownerId: ownerId,
+    });
+
+    if (!household) {
+      throw new Error("You don't have permission to update this device");
+    }
+
     device.alarm_triggered = 1;
     await device.save();
+
     return device;
   } catch (error) {
     throw error;

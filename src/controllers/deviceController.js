@@ -129,50 +129,36 @@ exports.deleteDevice = async (req, res) => {
   }
 };
 
-exports.setAlarmTriggeredOn = async (req, res) => {
+exports.setAlarmTriggeredOnByHwId = async (req, res) => {
   try {
     const ownerId = req.user?.id;
-    const hwId = req.params.id;
+    const hwId = req.params.hwId;
 
-    if (!isValidObjectId(hwId)) {
+    if (!hwId) {
       return res.status(400).json({
         success: false,
-        message: "Invalid device ID",
+        message: "Hardware ID is required",
       });
     }
 
-    const device = await Device.findById(hwId);
-    if (!device) {
-      return res.status(404).json({
-        success: false,
-        message: "Device not found",
-      });
-    }
-
-    const household = await Household.findOne({
-      _id: device.householdId,
-      ownerId: ownerId,
-    });
-
-    if (!household) {
-      return res.status(403).json({
-        success: false,
-        message: "You don't have permission to update this device",
-      });
-    }
-
-    device.alarm_triggered = 1;
-    await device.save();
+    const device = await deviceService.setAlarmTriggeredOnByHwId(hwId, ownerId);
 
     res.status(200).json({
       success: true,
       data: device,
     });
   } catch (error) {
-    console.error("Error setting alarm triggered on:", error);
-    res.status(500).json({
+    console.error("Error setting alarm:", error);
+
+    const statusCode = error.message.includes("not found")
+      ? 404
+      : error.message.includes("permission")
+      ? 403
+      : 500;
+
+    res.status(statusCode).json({
       success: false,
-      message: error.message || "Internal server error",
+      message: error.message,
     });
   }
 };
