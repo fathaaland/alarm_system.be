@@ -15,9 +15,9 @@ router.put(
   deviceController.setAlarmTriggeredOnByHwId
 );
 router.put(
-  "/set-alarm-triggered-off/:id",
+  "/set-alarm-triggered-off/:hwId",
   authMiddleware,
-  deviceController.setAlarmTriggeredOff
+  deviceController.setAlarmTriggeredOffByHwId
 );
 router.put(
   "/set-state-active",
