@@ -24,6 +24,10 @@ exports.getHousehold = async (userId) => {
   try {
     const households = await Household.find({
       $or: [{ ownerId: userId }, { members: userId }],
+    }).populate({
+      path: "devices",
+      model: Device,
+      select: "name type active alarm_triggered createdAt",
     });
 
     return households;

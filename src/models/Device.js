@@ -18,6 +18,7 @@ const deviceSchema = new mongoose.Schema({
   hw_id: {
     type: String,
     required: true,
+    unique: true,
   },
   active: {
     type: Boolean,
