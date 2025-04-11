@@ -53,28 +53,20 @@ exports.getHouseholdById = async (householdId, userId) => {
   }
 };
 
-exports.getWholeHouseholdById = async (householdId, userId) => {
+exports.getAllWholeHouseholds = async () => {
   try {
-    const household = await Household.findOne({
-      _id: householdId,
-      $or: [{ ownerId: userId }, { members: userId }],
-    })
-      .populate({
-        path: "members",
-        select: "firstName lastName email role",
-        model: User,
-      })
+    const households = await Household.find({})
       .populate({
         path: "devices",
         model: Device,
         select: "name type active alarm_triggered createdAt",
+      })
+      .populate({
+        path: "users",
+        model: User,
+        select: "firstName lastName email role",
       });
-
-    if (!household) {
-      throw new Error("Household not found or you don't have access");
-    }
-
-    return household;
+    return households;
   } catch (error) {
     throw error;
   }

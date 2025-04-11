@@ -1,21 +1,21 @@
-const roleGuard = (allowedRoles) => {
-  return (req, res, next) => {
-    const userRole = req.user.role;
+// const roleGuard = (allowedRoles) => {
+//   return (req, res, next) => {
+//     const userRole = req.user.role;
 
-    if (!userRole) {
-      return res
-        .status(401)
-        .json({ message: "Unauthorized - no role assigned' not" });
-    }
+//     if (!userRole) {
+//       return res
+//         .status(401)
+//         .json({ message: "Unauthorized - no role assigned' not" });
+//     }
 
-    if (!allowedRoles.includes(userRole)) {
-      return res
-        .status(403)
-        .json({ message: "Forbidden - insufficient permissions" });
-    }
+//     if (!allowedRoles.includes(userRole)) {
+//       return res
+//         .status(403)
+//         .json({ message: "Forbidden - insufficient permissions" });
+//     }
 
-    next();
-  };
-};
+//     next();
+//   };
+// };
 
-module.exports = roleGuard;
+// module.exports = roleGuard;

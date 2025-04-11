@@ -5,10 +5,6 @@ const authMiddleware = require("../middlewares/auth");
 
 router.get("/", authMiddleware, householdController.getHousehold);
 router.get("/:id", authMiddleware, householdController.getHouseholdById);
-router.get(
-  "/whole/:id",
-  authMiddleware,
-  householdController.getWholeHouseholdById
-);
+router.get("/whole", authMiddleware, householdController.getWholeHouseholds);
 
 module.exports = router;
