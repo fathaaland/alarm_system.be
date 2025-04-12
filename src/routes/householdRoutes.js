@@ -29,9 +29,4 @@ router.put(
   householdController.updateHouseholdName
 );
 
-router.get(
-  "/search-user/",
-  authMiddleware,
-  householdController.searcnhUserInHousehold
-);
 module.exports = router;

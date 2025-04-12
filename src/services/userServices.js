@@ -53,7 +53,7 @@ exports.getHouseholdById = async (householdId, userId) => {
   }
 };
 
-exports.getAllWholeHouseholds = async () => {
+exports.getAllWholeHouseholds = async (currentUserId) => {
   try {
     const households = await Household.find({})
       .populate({
@@ -62,12 +62,23 @@ exports.getAllWholeHouseholds = async () => {
         select: "name type active alarm_triggered createdAt",
       })
       .populate({
-        path: "users",
-        model: User,
+        path: "members",
+        model: Household,
         select: "firstName lastName email role",
-      });
-    return households;
+      })
+      .populate({
+        path: "ownerId",
+        model: User,
+        select: "_id",
+      })
+      .lean();
+
+    return households.map((household) => ({
+      ...household,
+      isOwner: household.ownerId && household.ownerId._id.equals(currentUserId),
+    }));
   } catch (error) {
+    console.error("Error in getAllWholeHouseholds service:", error);
     throw error;
   }
 };
