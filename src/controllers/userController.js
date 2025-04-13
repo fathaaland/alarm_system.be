@@ -45,19 +45,22 @@ exports.getHouseholdById = async (req, res) => {
   }
 };
 
-exports.getAllWholeHouseholds = async (req, res) => {
+exports.getWholeHouseholdById = async (req, res) => {
   try {
     const currentUserId = req.user.id;
-    const households = await householdService.getAllWholeHouseholds(
+    const householdId = req.params.id;
+
+    const household = await householdService.getWholeHouseholdById(
+      householdId,
       currentUserId
     );
 
     res.status(200).json({
       success: true,
-      data: households,
+      data: household,
     });
   } catch (error) {
-    console.error("Error in getAllWholeHouseholds controller:", error);
+    console.error("Error in getWholeHouseholdById controller:", error);
 
     const statusCode = error.message.includes("not found") ? 404 : 500;
     res.status(statusCode).json({

@@ -53,9 +53,15 @@ exports.getHouseholdById = async (householdId, userId) => {
   }
 };
 
-exports.getAllWholeHouseholds = async (currentUserId) => {
+exports.getWholeHouseholdById = async (householdId, currentUserId) => {
+  if (!householdId) {
+    throw new Error("Household ID is required");
+  }
+
   try {
-    const households = await Household.find({})
+    const household = await Household.findOne({
+      _id: householdId,
+    })
       .populate({
         path: "devices",
         model: Device,
@@ -63,22 +69,26 @@ exports.getAllWholeHouseholds = async (currentUserId) => {
       })
       .populate({
         path: "members",
-        model: Household,
+        model: User, // Changed from Household to User
         select: "firstName lastName email role",
       })
       .populate({
         path: "ownerId",
         model: User,
-        select: "_id",
+        select: "_id firstName lastName",
       })
       .lean();
 
-    return households.map((household) => ({
+    if (!household) {
+      throw new Error("Household not found or access denied");
+    }
+
+    return {
       ...household,
       isOwner: household.ownerId && household.ownerId._id.equals(currentUserId),
-    }));
+    };
   } catch (error) {
-    console.error("Error in getAllWholeHouseholds service:", error);
+    console.error("Error in getWholeHouseholdById service:", error);
     throw error;
   }
 };
