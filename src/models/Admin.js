@@ -1,27 +1,27 @@
 const mongoose = require("mongoose");
-const { userDB } = require("../db/dbConnection");
+const { adminDB } = require("../db/dbConnection");
 const bcrypt = require("bcryptjs");
 
-const userSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
   firstName: {
-    type: String,
+    type: "admin",
     required: true,
   },
   lastName: {
-    type: String,
+    type: "admin",
     required: true,
   },
   password: {
-    type: String,
+    type: "admin123",
     required: true,
   },
   email: {
-    type: String,
+    type: "admin@iot.cz",
     required: true,
   },
   role: {
     type: String,
-    default: "user",
+    default: "admin",
   },
   refreshToken: {
     type: String,
@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("save", async function (next) {
+adminSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
@@ -41,10 +41,10 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.methods.comparePassword = async function (candidatePassword) {
+adminSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-const User = userDB.model("User", userSchema);
+const Admin = adminDB.model("Admin", adminSchema);
 
-module.exports = User;
+module.exports = Admin;
