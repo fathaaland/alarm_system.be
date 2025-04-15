@@ -4,7 +4,6 @@ const {
   generateAdminRefreshToken,
   verifyAdminRefreshToken,
 } = require("../services/adminService");
-const User = require("../models/Admin");
 const Admin = require("../models/Admin");
 
 // Register
@@ -151,14 +150,16 @@ const logout = async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    return res.status(400).json({ message: "Refresh token is required." });
+    return res
+      .status(400)
+      .json({ message: "Refresh admin token is required." });
   }
 
   try {
-    const user = await User.findOne({ refreshToken });
-    if (user) {
-      user.refreshToken = null;
-      await user.save();
+    const admin = await Admin.findOne({ refreshToken });
+    if (admin) {
+      admin.refreshToken = null;
+      await admin.save();
     }
 
     res.json(200, { success: true }, { message: "Logout successful." });
