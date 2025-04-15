@@ -115,33 +115,34 @@ const refreshToken = async (req, res) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    return res.status(401).json({ message: "Refresh token is missing." });
+    return res.status(401).json({ message: "Refresh admin token is missing." });
   }
 
   try {
-    const decoded = verifyRefreshToken(refreshToken);
-    const user = await User.findById(decoded.id);
+    const decoded = verifyAdminRefreshToken(refreshToken);
+    const admin = await Admin.findById(decoded.id);
 
-    if (!user || user.refreshToken !== refreshToken) {
-      return res.status(403).json({ message: "Invalid refresh token." });
+    if (!admin || admin.refreshToken !== refreshToken) {
+      return res.status(403).json({ message: "Invalid admin refresh token." });
     }
 
-    const accessToken = generateAccessToken(user.id);
+    const accessToken = generateAdminAccessToken(admin.id);
     res.json({
-      message: "Access token refreshed successfully.",
+      message: "Access admin token refreshed successfully.",
       success: true,
       accessToken,
-      user: {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        role: user.role,
+      admin: {
+        id: admin.id,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        email: admin.email,
+        password: admin.password,
+        role: admin.role,
       },
     });
   } catch (error) {
     console.error(error);
-    res.status(403).json({ message: "Invalid refresh token." });
+    res.status(403).json({ message: "Invalid admin refresh token." });
   }
 };
 
