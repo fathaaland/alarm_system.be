@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const householdRoutes = require("./routes/householdRoutes");
 const userRoutes = require("./routes/userRoutes");
 const deviceRoutes = require("./routes/deviceRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const { householdDB } = require("./db/dbConnection");
 require("./db/dbConnection");
 
@@ -19,6 +20,7 @@ app.use("/auth", authRoutes);
 app.use("/household", householdRoutes);
 app.use("/user", userRoutes);
 app.use("/device", deviceRoutes);
+app.use("/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
