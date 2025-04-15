@@ -70,33 +70,38 @@ const login = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid login credentials." });
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res
+        .status(400)
+        .json({ message: "Invalid admin login credentials." });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid login credentials." });
+      return res
+        .status(400)
+        .json({ message: "Invalid admin login credentials." });
     }
 
-    const accessToken = generateAccessToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
+    const accessToken = generateAdminAccessToken(admin.id);
+    const refreshToken = generateAdminRefreshToken(admin.id);
 
-    user.refreshToken = refreshToken;
-    await user.save();
+    admin.refreshToken = refreshToken;
+    await admin.save();
 
     res.json({
       message: "Login successful.",
       success: true,
       accessToken,
       refreshToken,
-      user: {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        role: user.role,
+      admin: {
+        id: admin.id,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        email: admin.email,
+        password: admin.password,
+        role: admin.role,
       },
     });
   } catch (error) {
