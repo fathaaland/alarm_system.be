@@ -3,17 +3,14 @@ const Device = require("../models/Device");
 const Household = require("../models/Household");
 const User = require("../models/User");
 const mongoose = require("mongoose");
+const { sendDiscordNotification } = require("../middlewares/discordNotifier");
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 exports.createDevice = async (req, res) => {
   try {
-    console.log("Request body:", req.body);
-    console.log("User from token:", req.user);
-
     const { name, type, active, alarm_triggered, householdId, hw_id } =
       req.body;
-
     const ownerId = req.user?.id;
 
     if (!ownerId) {
@@ -58,10 +55,12 @@ exports.createDevice = async (req, res) => {
       hw_id,
     });
 
-    console.log("New device:", newDevice);
-
     household.devices.push(newDevice._id);
     await household.save();
+
+    await sendDiscordNotification(
+      `:new: User ${req.user.username} (ID: ${ownerId}) created new device "${name}" (ID: ${newDevice._id}) in household ${household.name} (ID: ${householdId})`
+    );
 
     res.status(201).json({
       success: true,
@@ -116,6 +115,10 @@ exports.deleteDevice = async (req, res) => {
     );
     await household.save();
 
+    await sendDiscordNotification(
+      `:wastebasket: User ${req.user.username} (ID: ${ownerId}) deleted device "${device.name}" (ID: ${deviceId}) from household ${household.name} (ID: ${household._id})`
+    );
+
     res.status(200).json({
       success: true,
       message: "Device deleted successfully",
@@ -142,6 +145,10 @@ exports.setAlarmTriggeredOnByHwId = async (req, res) => {
     }
 
     const device = await deviceService.setAlarmTriggeredOnByHwId(hwId, ownerId);
+
+    await sendDiscordNotification(
+      `:rotating_light: Alarm triggered ON for device "${device.name}" (HW ID: ${hwId}) by user ${req.user.username} (ID: ${ownerId})`
+    );
 
     res.status(200).json({
       success: true,
@@ -178,6 +185,10 @@ exports.setAlarmTriggeredOffByHwId = async (req, res) => {
     const device = await deviceService.setAlarmTriggeredOffByHwId(
       hwId,
       ownerId
+    );
+
+    await sendDiscordNotification(
+      `:white_check_mark: Alarm triggered OFF for device "${device.name}" (HW ID: ${hwId}) by user ${req.user.username} (ID: ${ownerId})`
     );
 
     res.status(200).json({
@@ -233,6 +244,10 @@ exports.setStateActive = async (req, res) => {
 
     await Promise.all(updatePromises);
 
+    await sendDiscordNotification(
+      `:electric_plug: User ${req.user.username} (ID: ${ownerId}) activated ALL devices in household "${household.name}" (ID: ${householdId})`
+    );
+
     res.status(200).json({
       success: true,
       data: devices,
@@ -278,6 +293,10 @@ exports.setStateDeactive = async (req, res) => {
     });
 
     await Promise.all(updatePromises);
+
+    await sendDiscordNotification(
+      `:power_off: User ${req.user.username} (ID: ${ownerId}) deactivated ALL devices in household "${household.name}" (ID: ${householdId})`
+    );
 
     res.status(200).json({
       success: true,
