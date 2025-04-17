@@ -5,6 +5,7 @@ const {
   verifyRefreshToken,
 } = require("../services/authService");
 const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 
 // Register
 const register = async (req, res) => {
@@ -134,22 +135,31 @@ const refreshToken = async (req, res) => {
 
 // Logout
 const logout = async (req, res) => {
-  const { refreshToken } = req.body;
+  const authHeader = req.headers["authorization"];
+  const accessToken = authHeader && authHeader.split(" ")[1];
 
-  if (!refreshToken) {
-    return res.status(400).json({ message: "Refresh token is required." });
+  if (!accessToken) {
+    return res.status(401).json({ message: "Access token is missing." });
   }
 
   try {
-    const user = await User.findOne({ refreshToken });
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded.id);
     if (user) {
       user.refreshToken = null;
       await user.save();
     }
 
-    res.json(200, { success: true }, { message: "Logout successful." });
+    res.status(200).json({
+      success: true,
+      message: "Logout successful.",
+    });
   } catch (error) {
     console.error(error);
+    if (error.name === "JsonWebTokenError") {
+      return res.status(403).json({ message: "Invalid access token." });
+    }
     res.status(500).json({ message: "Internal server error." });
   }
 };
