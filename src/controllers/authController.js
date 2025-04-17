@@ -30,16 +30,13 @@ const register = async (req, res) => {
       role,
     });
 
-    const accessToken = generateAccessToken(user.id);
     const refreshToken = generateRefreshToken(user.id);
-
     user.refreshToken = refreshToken;
     await user.save();
 
     res.json({
       message: "User registered successfully.",
       success: true,
-      accessToken,
       refreshToken,
       user: {
         id: user.id,
@@ -78,9 +75,7 @@ const login = async (req, res) => {
     }
 
     const accessToken = generateAccessToken(user.id);
-    const refreshToken = generateRefreshToken(user.id);
 
-    user.refreshToken = refreshToken;
     await user.save();
 
     res.json({
