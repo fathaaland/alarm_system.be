@@ -93,4 +93,19 @@ exports.getWholeHouseholdById = async (householdId, currentUserId) => {
   }
 };
 
+exports.getAllHouseholds = async (userId) => {
+  try {
+    const household = await Household.find({});
+
+    if (!household) {
+      throw new Error("Household not found or you don't have access");
+    }
+
+    return household;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 module.exports = exports;

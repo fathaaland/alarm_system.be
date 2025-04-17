@@ -69,3 +69,24 @@ exports.getWholeHouseholdById = async (req, res) => {
     });
   }
 };
+
+
+exports.getAllHouseholds = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const households = await householdService.getAllHouseholds(userId);
+
+    res.status(200).json({
+      success: true,
+      data: households,
+    });
+  } catch (error) {
+    console.error("Error fetching all households:", error);
+
+    const statusCode = error.message.includes("not found") ? 404 : 500;
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+}

@@ -10,5 +10,8 @@ router.get(
 );
 router.get("/", authMiddleware, householdController.getHousehold);
 router.get("/:id", authMiddleware, householdController.getHouseholdById);
+router.get("/all", authMiddleware, householdController.getAllHouseholds);
+
+
 
 module.exports = router;
