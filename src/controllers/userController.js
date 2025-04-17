@@ -70,11 +70,9 @@ exports.getWholeHouseholdById = async (req, res) => {
   }
 };
 
-
 exports.getAllHouseholds = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const households = await householdService.getAllHouseholds(userId);
+    const households = await householdService.getAllHouseholds();
 
     res.status(200).json({
       success: true,
@@ -83,10 +81,9 @@ exports.getAllHouseholds = async (req, res) => {
   } catch (error) {
     console.error("Error fetching all households:", error);
 
-    const statusCode = error.message.includes("not found") ? 404 : 500;
-    res.status(statusCode).json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Server error while fetching households.",
     });
   }
-}
+};
