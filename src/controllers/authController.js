@@ -31,14 +31,11 @@ const register = async (req, res) => {
       role,
     });
 
-    const refreshToken = generateRefreshToken(user.id);
-    user.refreshToken = refreshToken;
     await user.save();
 
     res.json({
       message: "User registered successfully.",
       success: true,
-      refreshToken,
       user: {
         id: user.id,
         firstName: user.firstName,
@@ -76,6 +73,8 @@ const login = async (req, res) => {
     }
 
     const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
+    user.refreshToken = refreshToken;
 
     await user.save();
 
@@ -115,6 +114,7 @@ const refreshToken = async (req, res) => {
     }
 
     const accessToken = generateAccessToken(user.id);
+
     res.json({
       message: "Access token refreshed successfully.",
       success: true,
