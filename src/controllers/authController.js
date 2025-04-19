@@ -5,6 +5,7 @@ const {
   verifyRefreshToken,
 } = require("../services/authService");
 const User = require("../models/User");
+const Admin = require("../models/Admin");
 const jwt = require("jsonwebtoken");
 
 // Register
