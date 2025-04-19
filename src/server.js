@@ -10,6 +10,7 @@ const householdRoutes = require("./routes/householdRoutes");
 const userRoutes = require("./routes/userRoutes");
 const deviceRoutes = require("./routes/deviceRoutes");
 const { householdDB } = require("./db/dbConnection");
+const adminAuthRoutes = require("./routes/admin-authRoutes");
 require("./db/dbConnection");
 
 app.use(cors());
@@ -19,6 +20,7 @@ app.use("/auth", authRoutes);
 app.use("/household", householdRoutes);
 app.use("/user", userRoutes);
 app.use("/device", deviceRoutes);
+app.use("/admin", adminAuthRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
