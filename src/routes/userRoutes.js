@@ -3,7 +3,7 @@ const router = express.Router();
 const householdController = require("../controllers/userController");
 const authMiddleware = require("../middlewares/auth");
 
-router.get("/households", householdController.getAllHouseholds);
+router.get("/users", householdController.getAllUsers);
 router.get(
   "/whole/:id",
   authMiddleware,

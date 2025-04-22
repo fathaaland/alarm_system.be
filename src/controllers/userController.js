@@ -70,20 +70,20 @@ exports.getWholeHouseholdById = async (req, res) => {
   }
 };
 
-exports.getAllHouseholds = async (req, res) => {
+exports.getAllUsers = async (req, res) => {
   try {
-    const households = await householdService.getAllHouseholds();
+    const users = await User.find().select("-password -refreshToken");
 
     res.status(200).json({
       success: true,
-      data: households,
+      data: users,
     });
   } catch (error) {
-    console.error("Error fetching all households:", error);
+    console.error("Error fetching all users:", error);
 
     res.status(500).json({
       success: false,
-      message: "Server error while fetching households.",
+      message: error.message || "Internal server error",
     });
   }
 };

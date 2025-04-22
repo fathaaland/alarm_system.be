@@ -93,11 +93,10 @@ exports.getWholeHouseholdById = async (householdId, currentUserId) => {
   }
 };
 
-exports.getAllHouseholds = async () => {
+exports.getAllUsers = async () => {
   try {
-    const households = await Household.find({});
-
-    return households;
+    const users = await User.find().select("-password -refreshToken");
+    return users;
   } catch (error) {
     throw error;
   }
