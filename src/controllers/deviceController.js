@@ -11,12 +11,12 @@ exports.createDevice = async (req, res) => {
   try {
     const { name, type, active, alarm_triggered, householdId, hw_id } =
       req.body;
-    const adminId = req.admin?.id;
+    const ownerId = req.user?.id;
 
-    if (!adminId) {
+    if (!ownerId) {
       return res.status(401).json({
         success: false,
-        message: "Admin authentication required",
+        message: "Owner authentication required",
       });
     }
 
@@ -34,7 +34,7 @@ exports.createDevice = async (req, res) => {
       alarm_triggered,
       householdId,
       hw_id,
-      createdBy: adminId,
+      createdBy: ownerId,
     });
 
     const household = await Household.findById(householdId);
@@ -68,7 +68,7 @@ exports.createDevice = async (req, res) => {
 
 exports.deleteDevice = async (req, res) => {
   try {
-    const adminId = req.admin?.id;
+    const ownerId = req.user?.id;
     const deviceId = req.params.id;
 
     if (!isValidObjectId(deviceId)) {
