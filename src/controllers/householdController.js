@@ -109,8 +109,6 @@ exports.addUserToHousehold = async (req, res) => {
     });
   } catch (error) {
     console.log("Error adding user to household.", error);
-
-    // const statusCode = error.message.includes("not found") ? 404 : 500;
     res.status(400).json({
       success: false,
       message: error.message,
