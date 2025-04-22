@@ -4,11 +4,9 @@ const {
   adminLogin,
   adminRefreshToken,
   adminLogout,
-  adminRegister,
 } = require("../controllers/admin-authController");
 
 // Admin auth routes
-router.post("/register", adminRegister);
 router.post("/login", adminLogin);
 router.post("/refresh-token", adminRefreshToken);
 router.post("/logout", adminLogout);

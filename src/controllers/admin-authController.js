@@ -24,41 +24,6 @@ const generateAdminAuthResponse = (admin) => {
   };
 };
 
-//Admin registration
-const adminRegister = async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ message: "Username and password are required." });
-  }
-
-  try {
-    const existingAdmin = await Admin.findOne({ username });
-    if (existingAdmin) {
-      return res.status(400).json({ message: "Username already exists." });
-    }
-
-    const admin = new Admin({ username, password });
-    await admin.save();
-
-    res.status(201).json({
-      message: "Admin registered successfully.",
-      success: true,
-      admin: {
-        id: admin.id,
-        username: admin.username,
-        refreshToken: admin.refreshToken,
-        role: admin.role,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error." });
-  }
-};
-
 //Admin login
 const adminLogin = async (req, res) => {
   const { username, password } = req.body;
