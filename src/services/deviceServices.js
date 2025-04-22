@@ -48,9 +48,9 @@ exports.setAlarmTriggeredOnByHwId = async (hwId, ownerId) => {
     if (!household) {
       throw new Error("You don't have permission to update this device");
     }
-    if (device.alarm_triggered === 1) {
-      throw new Error("Alarm is already triggered");
-    }
+    // if (device.alarm_triggered === 1) {
+    //   throw new Error("Alarm is already triggered");
+    // }
 
     device.alarm_triggered = 1;
     await device.save();
@@ -76,9 +76,9 @@ exports.setAlarmTriggeredOffByHwId = async (hwId, ownerId) => {
     if (!household) {
       throw new Error("You don't have permission to update this device");
     }
-    if (device.alarm_triggered === 0) {
-      throw new Error("Alarm is already off");
-    }
+    // if (device.alarm_triggered === 0) {
+    //   throw new Error("Alarm is already off");
+    // }
 
     device.alarm_triggered = 0;
     await device.save();
@@ -96,9 +96,9 @@ exports.setStateActive = async (householdId) => {
       throw new Error("Household not found.");
     }
 
-    if (household.active === true) {
-      throw new Error("Household is already active.");
-    }
+    // if (household.active === true) {
+    //   throw new Error("Household is already active.");
+    // }
 
     await household.map((device) => {
       device.active = true;
@@ -117,9 +117,9 @@ exports.setStateDeactive = async (householdId) => {
       throw new Error("Household not found.");
     }
 
-    if (!household.active === false) {
-      throw new Error("Household is already inactive.");
-    }
+    // if (!household.active === false) {
+    //   throw new Error("Household is already inactive.");
+    // }
     await household.map((device) => {
       device.active = false;
       device.save();
