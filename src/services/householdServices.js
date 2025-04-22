@@ -51,6 +51,9 @@ exports.addUserToHousehold = async (householdId, userId, newUserId) => {
         "Household not found or you don't have rights for this action."
       );
     }
+    if (household.ownerId.toString() === newUserId) {
+      throw new Error("You cannot add yourself as a member.");
+    }
 
     if (household.members.includes(newUserId)) {
       throw new Error("User already exists in the household.");
