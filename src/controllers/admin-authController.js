@@ -125,5 +125,4 @@ module.exports = {
   adminLogin,
   adminRefreshToken,
   adminLogout,
-  adminRegister,
 };
