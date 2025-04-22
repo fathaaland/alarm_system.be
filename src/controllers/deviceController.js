@@ -11,38 +11,19 @@ exports.createDevice = async (req, res) => {
   try {
     const { name, type, active, alarm_triggered, householdId, hw_id } =
       req.body;
-    const ownerId = req.user?.id;
+    const adminId = req.admin?.id;
 
-    if (!ownerId) {
+    if (!adminId) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized - invalid user token",
+        message: "Admin authentication required",
       });
     }
 
-    if (!isValidObjectId(ownerId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid owner ID",
-      });
-    }
-
-    if (!householdId || !isValidObjectId(householdId)) {
+    if (!isValidObjectId(householdId)) {
       return res.status(400).json({
         success: false,
         message: "Valid household ID is required",
-      });
-    }
-
-    const household = await Household.findOne({
-      _id: householdId,
-      $or: [{ ownerId: ownerId }],
-    });
-
-    if (!household) {
-      return res.status(403).json({
-        success: false,
-        message: "Household not found or you don't have access",
       });
     }
 
@@ -53,13 +34,22 @@ exports.createDevice = async (req, res) => {
       alarm_triggered,
       householdId,
       hw_id,
+      createdBy: adminId,
     });
+
+    const household = await Household.findById(householdId);
+    if (!household) {
+      return res.status(404).json({
+        success: false,
+        message: "Household not found",
+      });
+    }
 
     household.devices.push(newDevice._id);
     await household.save();
 
     await sendDiscordNotification(
-      `:new: User ${req.user.username} (ID: ${ownerId}) created new device "${name}" (ID: ${newDevice._id}) in household ${household.name} (ID: ${householdId})`
+      `:new: Admin ${req.admin.username} (ID: ${adminId}) created new device "${name}" (ID: ${newDevice._id}) in household ${household.name} (ID: ${householdId})`
     );
 
     res.status(201).json({
@@ -78,7 +68,7 @@ exports.createDevice = async (req, res) => {
 
 exports.deleteDevice = async (req, res) => {
   try {
-    const ownerId = req.user?.id;
+    const adminId = req.admin?.id;
     const deviceId = req.params.id;
 
     if (!isValidObjectId(deviceId)) {
@@ -88,7 +78,7 @@ exports.deleteDevice = async (req, res) => {
       });
     }
 
-    const device = await Device.findById(deviceId).populate("householdId");
+    const device = await Device.findById(deviceId);
     if (!device) {
       return res.status(404).json({
         success: false,
@@ -96,27 +86,15 @@ exports.deleteDevice = async (req, res) => {
       });
     }
 
-    const household = await Household.findOne({
-      _id: device.householdId,
-      ownerId: ownerId,
-    });
-
-    if (!household) {
-      return res.status(403).json({
-        success: false,
-        message: "You don't have permission to delete this device",
-      });
-    }
+    await Household.updateMany(
+      { devices: deviceId },
+      { $pull: { devices: deviceId } }
+    );
 
     await Device.deleteOne({ _id: deviceId });
 
-    household.devices = household.devices.filter(
-      (id) => id.toString() !== deviceId
-    );
-    await household.save();
-
     await sendDiscordNotification(
-      `:wastebasket: User ${req.user.username} (ID: ${ownerId}) deleted device "${device.name}" (ID: ${deviceId}) from household ${household.name} (ID: ${household._id})`
+      `:wastebasket: Admin ${req.admin.username} (ID: ${adminId}) deleted device "${device.name}" (ID: ${deviceId})`
     );
 
     res.status(200).json({
@@ -295,7 +273,7 @@ exports.setStateDeactive = async (req, res) => {
     await Promise.all(updatePromises);
 
     await sendDiscordNotification(
-      `:power_off: User ${req.user.username} (ID: ${ownerId}) deactivated ALL devices in household "${household.name}" (ID: ${householdId})`
+      `:x: User ${req.user.username} (ID: ${ownerId}) deactivated ALL devices in household "${household.name}" (ID: ${householdId})`
     );
 
     res.status(200).json({

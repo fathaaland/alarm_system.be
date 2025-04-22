@@ -10,6 +10,8 @@ exports.createDevice = async (deviceData) => {
       alarm_triggered: deviceData.alarm_triggered,
       householdId: deviceData.householdId,
       hw_id: deviceData.hw_id,
+      createdBy: deviceData.createdBy,
+      isAdminCreated: true,
     });
 
     await newDevice.save();
@@ -19,22 +21,13 @@ exports.createDevice = async (deviceData) => {
   }
 };
 
-exports.deleteDevice = async (deviceId, ownerId) => {
+exports.deleteDevice = async (deviceId) => {
   try {
-    const household = await Household.findOne({
-      _id: deviceId,
-      ownerId: ownerId,
-    });
-
-    if (!household) {
-      throw new Error(
-        "Household not found or you don't have rights for this action."
-      );
+    const device = await Device.findByIdAndDelete(deviceId);
+    if (!device) {
+      throw new Error("Device not found");
     }
-
-    await household.deleteOne({ _id: deviceId });
-
-    return household;
+    return device;
   } catch (error) {
     throw error;
   }

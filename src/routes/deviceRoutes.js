@@ -4,30 +4,30 @@ const deviceController = require("../controllers/deviceController");
 const authMiddleware = require("../middlewares/auth");
 const adminMiddleware = require("../middlewares/adminMiddleware");
 
-router.post("/create", adminMiddleware, deviceController.createDevice);
+router.post("/create", /*adminMiddleware,*/ deviceController.createDevice);
 router.delete(
   "/delete/:deviceId",
-  adminMiddleware,
+  // adminMiddleware,
   deviceController.deleteDevice
 );
 router.put(
   "/set-alarm-triggered-on/:hwId",
-  authMiddleware,
+  // authMiddleware,
   deviceController.setAlarmTriggeredOnByHwId
 );
 router.put(
   "/set-alarm-triggered-off/:hwId",
-  authMiddleware,
+  // authMiddleware,
   deviceController.setAlarmTriggeredOffByHwId
 );
 router.put(
   "/set-state-active",
-  authMiddleware,
+  // authMiddleware,
   deviceController.setStateActive
 );
 router.put(
   "/set-state-deactive",
-  authMiddleware,
+  // authMiddleware,
   deviceController.setStateDeactive
 );
 

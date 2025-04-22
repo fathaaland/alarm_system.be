@@ -4,11 +4,13 @@ const {
   adminLogin,
   adminRefreshToken,
   adminLogout,
+  adminRegister,
 } = require("../controllers/admin-authController");
 
 // Admin auth routes
-router.post("/admin/login", adminLogin);
-router.post("/admin/refresh-token", adminRefreshToken);
-router.post("/admin/logout", adminLogout);
+router.post("/register", adminRegister);
+router.post("/login", adminLogin);
+router.post("/refresh-token", adminRefreshToken);
+router.post("/logout", adminLogout);
 
 module.exports = router;
