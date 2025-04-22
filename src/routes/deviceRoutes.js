@@ -4,10 +4,10 @@ const deviceController = require("../controllers/deviceController");
 const authMiddleware = require("../middlewares/auth");
 const adminMiddleware = require("../middlewares/adminMiddleware");
 
-router.post("/create", adminMiddleware, deviceController.createDevice);
+router.post("/create" /*,adminMiddleware*/, deviceController.createDevice);
 router.delete(
   "/delete/:deviceId",
-  adminMiddleware,
+  // adminMiddleware,
   deviceController.deleteDevice
 );
 router.put(
