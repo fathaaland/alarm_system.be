@@ -122,6 +122,10 @@ exports.setAlarmTriggeredOnByHwId = async (req, res) => {
       });
     }
 
+    if (device.alarm_triggered === 1) {
+      throw new Error("Alarm is already triggered");
+    }
+
     const device = await deviceService.setAlarmTriggeredOnByHwId(hwId, ownerId);
 
     await sendDiscordNotification(
@@ -158,6 +162,10 @@ exports.setAlarmTriggeredOffByHwId = async (req, res) => {
         success: false,
         message: "Hardware ID is required",
       });
+    }
+
+    if (device.alarm_triggered === 0) {
+      throw new Error("Alarm is already off");
     }
 
     const device = await deviceService.setAlarmTriggeredOffByHwId(
@@ -213,6 +221,10 @@ exports.setStateActive = async (req, res) => {
       });
     }
 
+    if (household.active === true) {
+      throw new Error("Household is already active.");
+    }
+
     const devices = await Device.find({ householdId });
 
     const updatePromises = devices.map((device) => {
@@ -261,6 +273,10 @@ exports.setStateDeactive = async (req, res) => {
         success: false,
         message: "Household not found or you don't have permission",
       });
+    }
+
+    if (!household.active === false) {
+      throw new Error("Household is already inactive.");
     }
 
     const devices = await Device.find({ householdId });
