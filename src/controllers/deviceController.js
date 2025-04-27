@@ -11,7 +11,8 @@ exports.createDevice = async (req, res) => {
   try {
     const { name, type, active, alarm_triggered, householdId, hw_id } =
       req.body;
-    const adminId = req.admin?.id;
+
+    const adminId = req.user?.id;
 
     if (!adminId) {
       return res.status(401).json({
@@ -68,7 +69,7 @@ exports.createDevice = async (req, res) => {
 
 exports.deleteDevice = async (req, res) => {
   try {
-    const adminId = req.admin?.id;
+    const adminId = req.user?.id;
     const deviceId = req.params.id;
 
     if (!isValidObjectId(deviceId)) {
