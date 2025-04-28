@@ -28,6 +28,11 @@ const deviceSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Admin",
+    // required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

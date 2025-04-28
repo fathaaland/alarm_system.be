@@ -12,7 +12,7 @@ exports.createDevice = async (req, res) => {
     const { name, type, active, alarm_triggered, householdId, hw_id } =
       req.body;
 
-    const adminId = req.user?.id;
+    const adminId = req.admin?.id;
 
     if (!adminId) {
       return res.status(401).json({
@@ -69,13 +69,20 @@ exports.createDevice = async (req, res) => {
 
 exports.deleteDevice = async (req, res) => {
   try {
-    const adminId = req.user?.id;
-    const deviceId = req.params.id;
+    const adminId = req.admin?.id;
+    const deviceId = req.params.deviceId;
+
+    if (!adminId) {
+      return res.status(403).json({
+        success: false,
+        message: "Pouze admin může mazat zařízení",
+      });
+    }
 
     if (!isValidObjectId(deviceId)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid device ID",
+        message: "Neplatné ID zařízení",
       });
     }
 
@@ -83,30 +90,30 @@ exports.deleteDevice = async (req, res) => {
     if (!device) {
       return res.status(404).json({
         success: false,
-        message: "Device not found",
+        message: "Zařízení nenalezeno",
       });
     }
 
-    await Household.updateMany(
-      { devices: deviceId },
+    await Household.updateOne(
+      { _id: device.householdId },
       { $pull: { devices: deviceId } }
     );
 
     await Device.deleteOne({ _id: deviceId });
 
     await sendDiscordNotification(
-      `:wastebasket: Admin ${req.admin.username} (ID: ${adminId}) deleted device "${device.name}" (ID: ${deviceId})`
+      `:wastebasket: Admin ${req.admin.username} (ID: ${adminId}) smazal zařízení "${device.name}" (ID: ${deviceId})`
     );
 
     res.status(200).json({
       success: true,
-      message: "Device deleted successfully",
+      message: "Zařízení úspěšně smazáno",
     });
   } catch (error) {
-    console.error("Error deleting device:", error);
+    console.error("Chyba při mazání zařízení:", error);
     res.status(500).json({
       success: false,
-      message: error.message || "Internal server error",
+      message: error.message || "Interní chyba serveru",
     });
   }
 };

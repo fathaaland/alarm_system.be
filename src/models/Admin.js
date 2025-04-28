@@ -3,10 +3,22 @@ const { adminDB } = require("../db/dbConnection");
 const bcrypt = require("bcryptjs");
 
 const adminSchema = new mongoose.Schema({
-  username: {
+  firstName: {
     type: String,
     required: true,
     unique: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
   },
   password: {
     type: String,

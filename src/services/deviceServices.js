@@ -21,13 +21,15 @@ exports.createDevice = async (deviceData) => {
   }
 };
 
-exports.deleteDevice = async (deviceId) => {
+exports.deleteDevice = async (deviceId, adminId) => {
   try {
-    const device = await Device.findByIdAndDelete(deviceId);
+    const device = await Device.findById(deviceId);
     if (!device) {
-      throw new Error("Device not found");
+      throw new Error("Zařízení nenalezeno");
     }
-    return device;
+
+    const result = await Device.findByIdAndDelete(deviceId);
+    return result;
   } catch (error) {
     throw error;
   }

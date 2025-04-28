@@ -2,13 +2,10 @@ const express = require("express");
 const router = express.Router();
 const deviceController = require("../controllers/deviceController");
 const authMiddleware = require("../middlewares/auth");
+const adminAuth = require("../middlewares/admin");
 
-router.post("/create", authMiddleware, deviceController.createDevice);
-router.delete(
-  "/delete/:deviceId",
-  authMiddleware,
-  deviceController.deleteDevice
-);
+router.post("/create", adminAuth, deviceController.createDevice);
+router.delete("/delete/:deviceId", adminAuth, deviceController.deleteDevice);
 router.put(
   "/set-alarm-triggered-on/:hwId",
   authMiddleware,

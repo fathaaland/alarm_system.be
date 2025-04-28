@@ -9,8 +9,9 @@ const authRoutes = require("./routes/authRoutes");
 const householdRoutes = require("./routes/householdRoutes");
 const userRoutes = require("./routes/userRoutes");
 const deviceRoutes = require("./routes/deviceRoutes");
+const adminAuthRoutes = require("./routes/adminRoutes");
 const { householdDB } = require("./db/dbConnection");
-const adminAuthRoutes = require("./routes/admin-authRoutes");
+
 require("./db/dbConnection");
 
 app.use(cors());
