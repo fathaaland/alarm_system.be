@@ -55,9 +55,13 @@ exports.getWholeHouseholdById = async (req, res) => {
       currentUserId
     );
 
+    const isOwner = household.isOwner;
+    delete household.isOwner;
+
     res.status(200).json({
       success: true,
       data: household,
+      isOwner: isOwner,
     });
   } catch (error) {
     console.error("Error in getWholeHouseholdById controller:", error);

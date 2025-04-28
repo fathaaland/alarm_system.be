@@ -24,11 +24,18 @@ exports.getHousehold = async (userId) => {
   try {
     const households = await Household.find({
       $or: [{ ownerId: userId }, { members: userId }],
-    }).populate({
-      path: "devices",
-      model: Device,
-      select: "name type active alarm_triggered createdAt",
-    });
+    })
+      .populate({
+        path: "devices",
+        model: Device,
+        select: "name type active alarm_triggered createdAt",
+      })
+      .populate({
+        path: "ownerId",
+        model: User,
+        select: "_id firstName lastName",
+      })
+      .lean();
 
     return households;
   } catch (error) {
@@ -69,7 +76,7 @@ exports.getWholeHouseholdById = async (householdId, currentUserId) => {
       })
       .populate({
         path: "members",
-        model: User, // Changed from Household to User
+        model: User,
         select: "firstName lastName email role",
       })
       .populate({
