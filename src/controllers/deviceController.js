@@ -130,7 +130,7 @@ exports.setAlarmTriggeredOnByHwId = async (req, res) => {
       });
     }
 
-    if (device.alarm_triggered === 1) {
+    if (device.alarm_triggered === 1 && device.active === true) {
       throw new Error("Alarm is already triggered");
     }
 
@@ -172,7 +172,7 @@ exports.setAlarmTriggeredOffByHwId = async (req, res) => {
       });
     }
 
-    if (device.alarm_triggered === 0) {
+    if (device.alarm_triggered === 0 && device.active === true) {
       throw new Error("Alarm is already off");
     }
 
