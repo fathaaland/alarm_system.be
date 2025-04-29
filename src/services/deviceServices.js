@@ -119,4 +119,13 @@ exports.setStateDeactive = async (householdId) => {
   }
 };
 
+exports.getDevices = async (householdId) => {
+  try {
+    const devices = await Device.find({ householdId: householdId });
+    return devices;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = exports;
