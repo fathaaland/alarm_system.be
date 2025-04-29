@@ -82,7 +82,7 @@ exports.getWholeHouseholdById = async (householdId, currentUserId) => {
       .populate({
         path: "ownerId",
         model: User,
-        select: "_id firstName lastName",
+        select: "_id firstName lastName email",
       })
       .lean();
 
