@@ -130,32 +130,39 @@ exports.setAlarmTriggeredOnByHwId = async (req, res) => {
       });
     }
 
-    if (device.alarm_triggered === 1 && device.active === true) {
-      throw new Error("Alarm is already triggered");
+    const device = await Device.findOne({ hw_id: hwId });
+    if (!device) {
+      return res.status(404).json({
+        success: false,
+        message: "Device not found",
+      });
     }
 
-    const device = await deviceService.setAlarmTriggeredOnByHwId(hwId, ownerId);
+    if (device.alarm_triggered === 1 && device.active === true) {
+      return res.status(400).json({
+        success: false,
+        message: "Alarm is already triggered",
+      });
+    }
+
+    const updatedDevice = await deviceService.setAlarmTriggeredOnByHwId(
+      hwId,
+      ownerId
+    );
 
     await sendDiscordNotification(
-      `:rotating_light: Alarm triggered ON for device "${device.name}" (HW ID: ${hwId}) by user ${req.user.username} (ID: ${ownerId})`
+      `:rotating_light: Alarm triggered ON for device "${updatedDevice.name}" (HW ID: ${hwId}) by user ${req.user.username} (ID: ${ownerId})`
     );
 
     res.status(200).json({
       success: true,
-      data: device,
+      data: updatedDevice,
     });
   } catch (error) {
     console.error("Error setting alarm:", error);
-
-    const statusCode = error.message.includes("not found")
-      ? 404
-      : error.message.includes("permission")
-      ? 403
-      : 500;
-
-    res.status(statusCode).json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message || "Internal server error",
     });
   }
 };
@@ -172,35 +179,39 @@ exports.setAlarmTriggeredOffByHwId = async (req, res) => {
       });
     }
 
-    if (device.alarm_triggered === 0 && device.active === true) {
-      throw new Error("Alarm is already off");
+    const device = await Device.findOne({ hw_id: hwId });
+    if (!device) {
+      return res.status(404).json({
+        success: false,
+        message: "Device not found",
+      });
     }
 
-    const device = await deviceService.setAlarmTriggeredOffByHwId(
+    if (device.alarm_triggered === 0 && device.active === true) {
+      return res.status(400).json({
+        success: false,
+        message: "Alarm is already off",
+      });
+    }
+
+    const updatedDevice = await deviceService.setAlarmTriggeredOffByHwId(
       hwId,
       ownerId
     );
 
     await sendDiscordNotification(
-      `:white_check_mark: Alarm triggered OFF for device "${device.name}" (HW ID: ${hwId}) by user ${req.user.username} (ID: ${ownerId})`
+      `:white_check_mark: Alarm triggered OFF for device "${updatedDevice.name}" (HW ID: ${hwId}) by user ${req.user.username} (ID: ${ownerId})`
     );
 
     res.status(200).json({
       success: true,
-      data: device,
+      data: updatedDevice,
     });
   } catch (error) {
     console.error("Error setting alarm:", error);
-
-    const statusCode = error.message.includes("not found")
-      ? 404
-      : error.message.includes("permission")
-      ? 403
-      : 500;
-
-    res.status(statusCode).json({
+    res.status(500).json({
       success: false,
-      message: error.message,
+      message: error.message || "Internal server error",
     });
   }
 };
@@ -230,7 +241,10 @@ exports.setStateActive = async (req, res) => {
     }
 
     if (household.active === true) {
-      throw new Error("Household is already active.");
+      return res.status(400).json({
+        success: false,
+        message: "Household is already active.",
+      });
     }
 
     const devices = await Device.find({ householdId });
@@ -242,8 +256,11 @@ exports.setStateActive = async (req, res) => {
 
     await Promise.all(updatePromises);
 
+    household.active = false;
+    await household.save();
+
     await sendDiscordNotification(
-      `:electric_plug: User ${req.user.username} (ID: ${ownerId}) activated ALL devices in household "${household.name}" (ID: ${householdId})`
+      `:x: User ${req.user.username} (ID: ${ownerId}) deactivated ALL devices in household "${household.name}" (ID: ${householdId})`
     );
 
     res.status(200).json({
@@ -251,7 +268,7 @@ exports.setStateActive = async (req, res) => {
       data: devices,
     });
   } catch (error) {
-    console.error("Error setting state active:", error);
+    console.error("Error setting state deactive:", error);
     res.status(500).json({
       success: false,
       message: error.message || "Internal server error",
@@ -283,8 +300,11 @@ exports.setStateDeactive = async (req, res) => {
       });
     }
 
-    if (!household.active === false) {
-      throw new Error("Household is already inactive.");
+    if (household.active === false) {
+      return res.status(400).json({
+        success: false,
+        message: "Household is already deactive.",
+      });
     }
 
     const devices = await Device.find({ householdId });
@@ -295,6 +315,9 @@ exports.setStateDeactive = async (req, res) => {
     });
 
     await Promise.all(updatePromises);
+
+    household.active = false;
+    await household.save();
 
     await sendDiscordNotification(
       `:x: User ${req.user.username} (ID: ${ownerId}) deactivated ALL devices in household "${household.name}" (ID: ${householdId})`
