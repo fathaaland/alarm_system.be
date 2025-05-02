@@ -49,10 +49,6 @@ exports.createDevice = async (req, res) => {
     household.devices.push(newDevice._id);
     await household.save();
 
-    await sendDiscordNotification(
-      `:new: Admin ${req.admin.username} (ID: ${adminId}) created new device "${name}" (ID: ${newDevice._id}) in household ${household.name} (ID: ${householdId})`
-    );
-
     res.status(201).json({
       success: true,
       data: newDevice,
@@ -101,10 +97,6 @@ exports.deleteDevice = async (req, res) => {
 
     await Device.deleteOne({ _id: deviceId });
 
-    await sendDiscordNotification(
-      `:wastebasket: Admin ${req.admin.username} (ID: ${adminId}) smazal zařízení "${device.name}" (ID: ${deviceId})`
-    );
-
     res.status(200).json({
       success: true,
       message: "Zařízení úspěšně smazáno",
@@ -151,7 +143,7 @@ exports.setAlarmTriggeredOnByHwId = async (req, res) => {
     );
 
     await sendDiscordNotification(
-      `:rotating_light: Alarm triggered ON for device "${updatedDevice.name}" (HW ID: ${hwId}) by user ${req.user.username} (ID: ${ownerId})`
+      `:rotating_light: Alarm triggered ON for device "${updatedDevice.name}" by user ${req.user.username}`
     );
 
     res.status(200).json({
@@ -200,7 +192,7 @@ exports.setAlarmTriggeredOffByHwId = async (req, res) => {
     );
 
     await sendDiscordNotification(
-      `:white_check_mark: Alarm triggered OFF for device "${updatedDevice.name}" (HW ID: ${hwId}) by user ${req.user.username} (ID: ${ownerId})`
+      `:white_check_mark: Alarm triggered OFF for device "${updatedDevice.name}" by user ${req.user.username}`
     );
 
     res.status(200).json({
@@ -269,7 +261,7 @@ exports.setStateActive = async (ws, req) => {
     await household.save();
 
     await sendDiscordNotification(
-      `:white_check_mark: User ${req.user.username} (ID: ${ownerId}) activated ALL devices in household "${household.name}" (ID: ${householdId})`
+      `:white_check_mark: User ${req.user.username} activated ALL devices in household "${household.name}"`
     );
 
     ws.send(
@@ -343,7 +335,7 @@ exports.setStateDeactive = async (ws, req) => {
     await household.save();
 
     await sendDiscordNotification(
-      `:octagonal_sign: User ${req.user.username} (ID: ${ownerId}) deactivated ALL devices in household "${household.name}" (ID: ${householdId})`
+      `:octagonal_sign: User ${req.user.username} deactivated ALL devices in household "${household.name}"`
     );
 
     ws.send(
