@@ -290,10 +290,10 @@ exports.setStateActive = async (ws, req) => {
   }
 };
 
-exports.setStateDeactive = async (ws, res) => {
+exports.setStateDeactive = async (ws, req) => {
   try {
     const ownerId = req.user?.id;
-    const householdId = req.body.householdId;
+    const { householdId } = req.body;
 
     if (!isValidObjectId(householdId)) {
       ws.send(
@@ -343,7 +343,7 @@ exports.setStateDeactive = async (ws, res) => {
     await household.save();
 
     await sendDiscordNotification(
-      `:white_check_mark: User ${req.user.username} (ID: ${ownerId}) activated ALL devices in household "${household.name}" (ID: ${householdId})`
+      `:octagonal_sign: User ${req.user.username} (ID: ${ownerId}) deactivated ALL devices in household "${household.name}" (ID: ${householdId})`
     );
 
     ws.send(
@@ -354,7 +354,7 @@ exports.setStateDeactive = async (ws, res) => {
       })
     );
   } catch (error) {
-    console.error("Error setting state active:", error);
+    console.error("Error setting state deactive:", error);
     ws.send(
       JSON.stringify({
         success: false,

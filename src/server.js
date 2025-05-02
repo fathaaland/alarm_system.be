@@ -35,5 +35,12 @@ const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({
+  server,
+  path: "/set-state-active",
+  verifyClient: (info, done) => {
+    done(true);
+  },
+});
+
 setupDeviceWebSocket(wss);

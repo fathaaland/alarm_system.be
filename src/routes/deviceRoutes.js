@@ -21,24 +21,56 @@ router.put(
 
 const setupDeviceWebSocket = (wss) => {
   wss.on("connection", (ws, req) => {
-    authMiddleware(req, {}, async () => {
-      if (!req.user) {
-        ws.send(
-          JSON.stringify({ success: false, message: "Authentication failed" })
-        );
-        return ws.close();
-      }
+    const token = req.headers["authorization"]?.replace("Bearer ", "");
+
+    if (!token) {
+      ws.send(
+        JSON.stringify({
+          success: false,
+          message: "Access denied. Token is missing.",
+        })
+      );
+      return ws.close();
+    }
+
+    const fakeReq = {
+      header: () => `Bearer ${token}`,
+      headers: { authorization: `Bearer ${token}` },
+    };
+
+    const fakeRes = {
+      status: () => fakeRes,
+      json: (data) => {
+        ws.send(JSON.stringify(data));
+        ws.close();
+      },
+    };
+
+    authMiddleware(fakeReq, fakeRes, () => {
+      if (!fakeReq.user) return;
 
       ws.on("message", async (message) => {
         try {
           const data = JSON.parse(message);
 
+          if (!data.householdId || !data.action) {
+            return ws.send(
+              JSON.stringify({
+                success: false,
+                message: "Missing required fields",
+              })
+            );
+          }
+
+          const controllerReq = {
+            body: { householdId: data.householdId },
+            user: fakeReq.user,
+          };
+
           if (data.action === "setStateActive") {
-            req.body = data;
-            await deviceController.setStateActive(ws, req);
+            await deviceController.setStateActive(ws, controllerReq);
           } else if (data.action === "setStateDeactive") {
-            req.body = data;
-            await deviceController.setStateDeactive(ws, req);
+            await deviceController.setStateDeactive(ws, controllerReq);
           } else {
             ws.send(
               JSON.stringify({
@@ -51,7 +83,7 @@ const setupDeviceWebSocket = (wss) => {
           ws.send(
             JSON.stringify({
               success: false,
-              message: error.message || "Invalid message format",
+              message: error.message,
             })
           );
         }
@@ -59,7 +91,6 @@ const setupDeviceWebSocket = (wss) => {
     });
   });
 };
-
 module.exports = {
   router,
   setupDeviceWebSocket,
