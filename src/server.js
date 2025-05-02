@@ -4,14 +4,17 @@ const app = express();
 const cors = require("cors");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const WebSocket = require("ws");
 
 const authRoutes = require("./routes/authRoutes");
 const householdRoutes = require("./routes/householdRoutes");
 const userRoutes = require("./routes/userRoutes");
-const deviceRoutes = require("./routes/deviceRoutes");
 const adminAuthRoutes = require("./routes/adminRoutes");
+const {
+  router: deviceRoutes,
+  setupDeviceWebSocket,
+} = require("./routes/deviceRoutes");
 const { householdDB } = require("./db/dbConnection");
-
 require("./db/dbConnection");
 
 app.use(cors());
@@ -28,6 +31,9 @@ app.get("/", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+const wss = new WebSocket.Server({ server });
+setupDeviceWebSocket(wss);

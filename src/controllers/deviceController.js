@@ -290,7 +290,7 @@ exports.setStateActive = async (ws, req) => {
   }
 };
 
-exports.setStateDeactive = async (ws, req) => {
+exports.setStateDeactive = async (ws, res) => {
   try {
     const ownerId = req.user?.id;
     const householdId = req.body.householdId;
@@ -343,7 +343,7 @@ exports.setStateDeactive = async (ws, req) => {
     await household.save();
 
     await sendDiscordNotification(
-      `:x: User ${req.user.username} (ID: ${ownerId}) deactivated ALL devices in household "${household.name}" (ID: ${householdId})`
+      `:white_check_mark: User ${req.user.username} (ID: ${ownerId}) activated ALL devices in household "${household.name}" (ID: ${householdId})`
     );
 
     ws.send(
@@ -354,12 +354,51 @@ exports.setStateDeactive = async (ws, req) => {
       })
     );
   } catch (error) {
-    console.error("Error setting state deactive:", error);
+    console.error("Error setting state active:", error);
     ws.send(
       JSON.stringify({
         success: false,
         message: error.message || "Internal server error",
       })
     );
+  }
+};
+
+exports.getDevices = async (req, res) => {
+  try {
+    const ownerId = req.user?.id;
+    const householdId = req.body.householdId;
+
+    if (!isValidObjectId(householdId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid household ID",
+      });
+    }
+
+    const household = await Household.findOne({
+      _id: householdId,
+      ownerId: ownerId,
+    });
+
+    if (!household) {
+      return res.status(403).json({
+        success: false,
+        message: "Household not found or you don't have permission",
+      });
+    }
+
+    const devices = await deviceService.getDevices(householdId);
+
+    res.status(200).json({
+      success: true,
+      data: devices,
+    });
+  } catch (error) {
+    console.error("Error fetching devices:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
   }
 };
