@@ -216,16 +216,19 @@ exports.setAlarmTriggeredOffByHwId = async (req, res) => {
   }
 };
 
-exports.setStateActive = async (req, res) => {
+exports.setStateActive = async (ws, req) => {
   try {
     const ownerId = req.user?.id;
     const householdId = req.body.householdId;
 
     if (!isValidObjectId(householdId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid household ID",
-      });
+      ws.send(
+        JSON.stringify({
+          success: false,
+          message: "Invalid household ID",
+        })
+      );
+      return;
     }
 
     const household = await Household.findOne({
@@ -234,17 +237,23 @@ exports.setStateActive = async (req, res) => {
     });
 
     if (!household) {
-      return res.status(403).json({
-        success: false,
-        message: "Household not found or you don't have permission",
-      });
+      ws.send(
+        JSON.stringify({
+          success: false,
+          message: "Household not found or you don't have permission",
+        })
+      );
+      return;
     }
 
     if (household.active === true) {
-      return res.status(400).json({
-        success: false,
-        message: "Household is already active.",
-      });
+      ws.send(
+        JSON.stringify({
+          success: false,
+          message: "Household is already active.",
+        })
+      );
+      return;
     }
 
     const devices = await Device.find({ householdId });
@@ -256,23 +265,28 @@ exports.setStateActive = async (req, res) => {
 
     await Promise.all(updatePromises);
 
-    household.active = false;
+    household.active = true;
     await household.save();
 
     await sendDiscordNotification(
-      `:x: User ${req.user.username} (ID: ${ownerId}) deactivated ALL devices in household "${household.name}" (ID: ${householdId})`
+      `:white_check_mark: User ${req.user.username} (ID: ${ownerId}) activated ALL devices in household "${household.name}" (ID: ${householdId})`
     );
 
-    res.status(200).json({
-      success: true,
-      data: devices,
-    });
+    ws.send(
+      JSON.stringify({
+        success: true,
+        data: devices,
+        message: "All devices activated successfully",
+      })
+    );
   } catch (error) {
-    console.error("Error setting state deactive:", error);
-    res.status(500).json({
-      success: false,
-      message: error.message || "Internal server error",
-    });
+    console.error("Error setting state active:", error);
+    ws.send(
+      JSON.stringify({
+        success: false,
+        message: error.message || "Internal server error",
+      })
+    );
   }
 };
 
