@@ -37,7 +37,7 @@ const server = app.listen(PORT, () => {
 
 const wss = new WebSocket.Server({
   server,
-  path: "/set-state-active",
+  path: "/ws",
   verifyClient: (info, done) => {
     done(true);
   },
