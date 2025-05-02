@@ -290,16 +290,19 @@ exports.setStateActive = async (ws, req) => {
   }
 };
 
-exports.setStateDeactive = async (req, res) => {
+exports.setStateDeactive = async (ws, req) => {
   try {
     const ownerId = req.user?.id;
     const householdId = req.body.householdId;
 
     if (!isValidObjectId(householdId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid household ID",
-      });
+      ws.send(
+        JSON.stringify({
+          success: false,
+          message: "Invalid household ID",
+        })
+      );
+      return;
     }
 
     const household = await Household.findOne({
@@ -308,17 +311,23 @@ exports.setStateDeactive = async (req, res) => {
     });
 
     if (!household) {
-      return res.status(403).json({
-        success: false,
-        message: "Household not found or you don't have permission",
-      });
+      ws.send(
+        JSON.stringify({
+          success: false,
+          message: "Household not found or you don't have permission",
+        })
+      );
+      return;
     }
 
     if (household.active === false) {
-      return res.status(400).json({
-        success: false,
-        message: "Household is already deactive.",
-      });
+      ws.send(
+        JSON.stringify({
+          success: false,
+          message: "Household is already deactive.",
+        })
+      );
+      return;
     }
 
     const devices = await Device.find({ householdId });
@@ -337,54 +346,20 @@ exports.setStateDeactive = async (req, res) => {
       `:x: User ${req.user.username} (ID: ${ownerId}) deactivated ALL devices in household "${household.name}" (ID: ${householdId})`
     );
 
-    res.status(200).json({
-      success: true,
-      data: devices,
-    });
+    ws.send(
+      JSON.stringify({
+        success: true,
+        data: devices,
+        message: "All devices deactivated successfully",
+      })
+    );
   } catch (error) {
     console.error("Error setting state deactive:", error);
-    res.status(500).json({
-      success: false,
-      message: error.message || "Internal server error",
-    });
-  }
-};
-
-exports.getDevices = async (req, res) => {
-  try {
-    const ownerId = req.user?.id;
-    const householdId = req.body.householdId;
-
-    if (!isValidObjectId(householdId)) {
-      return res.status(400).json({
+    ws.send(
+      JSON.stringify({
         success: false,
-        message: "Invalid household ID",
-      });
-    }
-
-    const household = await Household.findOne({
-      _id: householdId,
-      ownerId: ownerId,
-    });
-
-    if (!household) {
-      return res.status(403).json({
-        success: false,
-        message: "Household not found or you don't have permission",
-      });
-    }
-
-    const devices = await deviceService.getDevices(householdId);
-
-    res.status(200).json({
-      success: true,
-      data: devices,
-    });
-  } catch (error) {
-    console.error("Error fetching devices:", error);
-    res.status(500).json({
-      success: false,
-      message: error.message || "Internal server error",
-    });
+        message: error.message || "Internal server error",
+      })
+    );
   }
 };
