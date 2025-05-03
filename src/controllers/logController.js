@@ -54,3 +54,27 @@ exports.deleteLogById = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+exports.getLogs = async (req, res) => {
+  try {
+    const { householdId } = req.params;
+
+    if (!householdId) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Missing household ID" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(householdId)) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid household ID" });
+    }
+
+    const logs = await logService.getLogs(householdId);
+
+    res.status(200).json({ success: true, data: logs });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
