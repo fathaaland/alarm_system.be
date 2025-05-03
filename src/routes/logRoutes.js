@@ -5,6 +5,6 @@ const authMiddleware = require("../middlewares/auth");
 
 router.get("/", authMiddleware, logController.getLogs);
 router.post("/create", authMiddleware, logController.createLog);
-router.get("/delete", authMiddleware, logController.deleteLogById);
+router.get("/delete/:id", authMiddleware, logController.deleteLogById);
 
 module.exports = router;
