@@ -18,7 +18,7 @@ exports.createLog = async (logData) => {
   }
 };
 
-exports.deleteLog = async (logId, adminId) => {
+exports.deleteLogById = async (logId, adminId) => {
   try {
     const log = await Log.findById(logId);
     if (!log) {
