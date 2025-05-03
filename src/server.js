@@ -10,6 +10,7 @@ const authRoutes = require("./routes/authRoutes");
 const householdRoutes = require("./routes/householdRoutes");
 const userRoutes = require("./routes/userRoutes");
 const adminAuthRoutes = require("./routes/adminRoutes");
+const logRoutes = require("./routes/logRoutes");
 const {
   router: deviceRoutes,
   setupDeviceWebSocket,
@@ -25,6 +26,7 @@ app.use("/household", householdRoutes);
 app.use("/user", userRoutes);
 app.use("/device", deviceRoutes);
 app.use("/admin", adminAuthRoutes);
+app.use("/log", logRoutes);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
