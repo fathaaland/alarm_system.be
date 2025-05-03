@@ -30,3 +30,27 @@ exports.createLog = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+exports.deleteLogById = async (req, res) => {
+  try {
+    const { logId } = req.params;
+
+    if (!logId) {
+      return res.status(400).json({ success: false, error: "Missing log ID" });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(logId)) {
+      return res.status(400).json({ success: false, error: "Invalid log ID" });
+    }
+
+    const deletedLog = await logService.deleteLogById(logId);
+
+    if (!deletedLog) {
+      return res.status(404).json({ success: false, error: "Log not found" });
+    }
+
+    res.status(200).json({ success: true, data: deletedLog });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
