@@ -1,18 +1,14 @@
 const Log = require("../models/Log");
 const Household = require("../models/Household");
-const { logDB } = require("../db/dbConnection");
 
 exports.createLog = async (logData) => {
   try {
-    const newLog = new logDB({
-      name: logData.name,
+    const newLog = new Log({
+      userId: logData.userId,
+      logId: logData.logId,
       type: logData.type,
-      active: logData.active,
-      alarm_triggered: logData.alarm_triggered,
-      householdId: logData.householdId,
-      hw_id: logData.hw_id,
-      createdBy: logData.createdBy,
-      isAdminCreated: true,
+      message: logData.message,
+      time: logData.time,
     });
 
     await newLog.save();
@@ -21,3 +17,28 @@ exports.createLog = async (logData) => {
     throw error;
   }
 };
+
+exports.deleteLog = async (logId, adminId) => {
+  try {
+    const log = await Log.findById(logId);
+    if (!log) {
+      throw new Error("Log not found");
+    }
+
+    const result = await Log.findByIdAndDelete(logId);
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getLogs = async (householdId) => {
+  try {
+    const logs = await Log.find({ householdId: householdId });
+    return logs;
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = exports;
