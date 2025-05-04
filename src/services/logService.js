@@ -34,7 +34,7 @@ exports.deleteLogById = async (logId, adminId) => {
 
     const result = await Log.findByIdAndDelete(logId);
 
-    await Household.findByIdAndUpdate(
+    await Household.findByIdAndDelete(
       log.householdId,
       { $pull: { logs: logId } },
       { new: true }

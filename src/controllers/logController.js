@@ -57,7 +57,7 @@ exports.deleteLogById = async (req, res) => {
 
 exports.getLogs = async (req, res) => {
   try {
-    const { householdId } = req.params;
+    const { householdId } = req.body;
 
     if (!householdId) {
       return res
