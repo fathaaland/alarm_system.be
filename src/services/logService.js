@@ -82,3 +82,5 @@ exports.getLogById = async (logId, userId, householdId) => {
 };
 
 module.exports = exports;
+
+///
