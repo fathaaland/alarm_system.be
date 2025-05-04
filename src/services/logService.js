@@ -34,7 +34,7 @@ exports.deleteLogById = async (logId, adminId) => {
 
     const result = await Log.findByIdAndDelete(logId);
 
-    await Household.findByIdAndDelete(
+    await Household.findByIdAndUpdate(
       log.householdId,
       { $pull: { logs: logId } },
       { new: true }
@@ -50,6 +50,32 @@ exports.getLogs = async (householdId) => {
   try {
     const logs = await Log.find({ householdId: householdId });
     return logs;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getLogById = async (logId, userId, householdId) => {
+  try {
+    const log = await Log.findOne({
+      _id: logId,
+      householdId: householdId,
+    });
+
+    if (!log) {
+      throw new Error("Log not found in this household");
+    }
+
+    const household = await Household.findOne({
+      _id: householdId,
+      $or: [{ ownerId: userId }, { members: userId }],
+    });
+
+    if (!household) {
+      throw new Error("You don't have access to this household");
+    }
+
+    return log;
   } catch (error) {
     throw error;
   }

@@ -78,3 +78,32 @@ exports.getLogs = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+exports.getLogById = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const logId = req.params.logId;
+    const { householdId } = req.body;
+
+    if (!householdId) {
+      return res.status(400).json({
+        success: false,
+        message: "Household ID is required",
+      });
+    }
+
+    const log = await logService.getLogById(logId, userId, householdId);
+
+    res.status(200).json({
+      success: true,
+      data: log,
+    });
+  } catch (error) {
+    console.log("Error fetching log by ID", error);
+    const statusCode = error.message.includes("not found") ? 404 : 500;
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
