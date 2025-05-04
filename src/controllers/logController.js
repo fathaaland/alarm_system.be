@@ -5,9 +5,9 @@ const logService = require("../services/logService");
 
 exports.createLog = async (req, res) => {
   try {
-    const { userId, logId, type, message, time } = req.body;
+    const { userId, deviceId, householdId, type, message } = req.body;
 
-    if (!userId || !logId || !type || !message || !time) {
+    if (!userId || !deviceId || !householdId || !message || !type) {
       return res
         .status(400)
         .json({ success: false, error: "Missing required fields" });
@@ -19,10 +19,10 @@ exports.createLog = async (req, res) => {
 
     const newLog = await logService.createLog({
       userId,
-      logId,
+      deviceId,
+      householdId,
       type,
       message,
-      time,
     });
 
     res.status(201).json({ success: true, data: newLog });

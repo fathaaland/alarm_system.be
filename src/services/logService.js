@@ -5,13 +5,20 @@ exports.createLog = async (logData) => {
   try {
     const newLog = new Log({
       userId: logData.userId,
-      logId: logData.logId,
+      deviceId: logData.deviceId,
+      householdId: logData.householdId,
       type: logData.type,
       message: logData.message,
-      time: logData.time,
     });
 
     await newLog.save();
+
+    await Household.findByIdAndUpdate(
+      logData.householdId,
+      { $push: { logs: newLog._id } },
+      { new: true }
+    );
+
     return newLog;
   } catch (error) {
     throw error;

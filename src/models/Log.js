@@ -7,8 +7,12 @@ const logSchema = new mongoose.Schema({
     ref: "User",
   },
   deviceId: {
+    type: String,
+    required: true,
+  },
+  householdId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Device",
+    ref: "Household",
   },
   type: {
     type: String,
@@ -18,13 +22,6 @@ const logSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  time: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
-const Log = logDB.model("Log", logSchema);
-
-module.exports = Log;
-module.exports = logSchema;
+module.exports = logDB.model("Log", logSchema);

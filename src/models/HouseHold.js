@@ -25,7 +25,8 @@ const householdSchema = new mongoose.Schema({
   ],
   logs: [
     {
-      type: logschema,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Log",
     },
   ],
   createdAt: {
