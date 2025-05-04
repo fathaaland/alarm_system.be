@@ -33,6 +33,13 @@ exports.deleteLogById = async (logId, adminId) => {
     }
 
     const result = await Log.findByIdAndDelete(logId);
+
+    await Household.findByIdAndUpdate(
+      log.householdId,
+      { $pull: { logs: logId } },
+      { new: true }
+    );
+
     return result;
   } catch (error) {
     throw error;
