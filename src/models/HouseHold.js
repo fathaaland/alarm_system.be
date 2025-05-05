@@ -1,4 +1,3 @@
-// models/Household.js
 const mongoose = require("mongoose");
 const { householdDB } = require("../db/dbConnection");
 
