@@ -1,25 +1,27 @@
-const Log = require("../models/Log");
+// services/logService.js
 const Household = require("../models/Household");
 
 exports.createLog = async (logData) => {
   try {
-    const newLog = new Log({
+    const newLog = {
       userId: logData.userId,
       deviceId: logData.deviceId,
-      householdId: logData.householdId,
       type: logData.type,
       message: logData.message,
-    });
+    };
 
-    await newLog.save();
-
-    await Household.findByIdAndUpdate(
+    const household = await Household.findByIdAndUpdate(
       logData.householdId,
-      { $push: { logs: newLog._id } },
+      { $push: { logs: newLog } },
       { new: true }
     );
 
-    return newLog;
+    if (!household) {
+      throw new Error("Household not found");
+    }
+
+    // Vrátíme nově vytvořený log (poslední v poli)
+    return household.logs[household.logs.length - 1];
   } catch (error) {
     throw error;
   }
@@ -27,20 +29,17 @@ exports.createLog = async (logData) => {
 
 exports.deleteLogById = async (logId, adminId) => {
   try {
-    const log = await Log.findById(logId);
-    if (!log) {
-      throw new Error("Log not found");
-    }
-
-    const result = await Log.findByIdAndDelete(logId);
-
-    await Household.findByIdAndUpdate(
-      log.householdId,
-      { $pull: { logs: logId } },
+    const household = await Household.findOneAndUpdate(
+      { "logs._id": logId },
+      { $pull: { logs: { _id: logId } } },
       { new: true }
     );
 
-    return result;
+    if (!household) {
+      throw new Error("Log not found in any household");
+    }
+
+    return { message: "Log deleted successfully" };
   } catch (error) {
     throw error;
   }
@@ -48,8 +47,11 @@ exports.deleteLogById = async (logId, adminId) => {
 
 exports.getLogs = async (householdId) => {
   try {
-    const logs = await Log.find({ householdId: householdId });
-    return logs;
+    const household = await Household.findById(householdId).select("logs");
+    if (!household) {
+      throw new Error("Household not found");
+    }
+    return household.logs;
   } catch (error) {
     throw error;
   }
@@ -57,15 +59,6 @@ exports.getLogs = async (householdId) => {
 
 exports.getLogById = async (logId, userId, householdId) => {
   try {
-    const log = await Log.findOne({
-      _id: logId,
-      householdId: householdId,
-    });
-
-    if (!log) {
-      throw new Error("Log not found in this household");
-    }
-
     const household = await Household.findOne({
       _id: householdId,
       $or: [{ ownerId: userId }, { members: userId }],
@@ -75,6 +68,11 @@ exports.getLogById = async (logId, userId, householdId) => {
       throw new Error("You don't have access to this household");
     }
 
+    const log = household.logs.id(logId);
+    if (!log) {
+      throw new Error("Log not found in this household");
+    }
+
     return log;
   } catch (error) {
     throw error;
@@ -82,5 +80,3 @@ exports.getLogById = async (logId, userId, householdId) => {
 };
 
 module.exports = exports;
-
-///
