@@ -23,6 +23,10 @@ const householdSchema = new mongoose.Schema({
       ref: "Device",
     },
   ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
   logs: [
     {
       userId: {
@@ -49,10 +53,6 @@ const householdSchema = new mongoose.Schema({
       },
     },
   ],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
 if (householdDB.models.Household) {
