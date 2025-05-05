@@ -1,6 +1,6 @@
+// models/Household.js
 const mongoose = require("mongoose");
 const { householdDB } = require("../db/dbConnection");
-const logschema = require("./Log");
 
 const householdSchema = new mongoose.Schema({
   name: {
@@ -25,8 +25,28 @@ const householdSchema = new mongoose.Schema({
   ],
   logs: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Log",
+      userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+      deviceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Device",
+        required: true,
+      },
+      type: {
+        type: String,
+        required: true,
+      },
+      message: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
     },
   ],
   createdAt: {

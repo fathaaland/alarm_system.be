@@ -7,6 +7,26 @@ const { sendDiscordNotification } = require("../middlewares/discordNotifier");
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
+const createDeviceLog = async (
+  userId,
+  deviceId,
+  householdId,
+  type,
+  message
+) => {
+  try {
+    await logService.createLog({
+      userId,
+      deviceId,
+      householdId,
+      type,
+      message,
+    });
+  } catch (error) {
+    console.error("Error creating device log:", error);
+  }
+};
+
 exports.createDevice = async (req, res) => {
   try {
     const { name, type, active, alarm_triggered, householdId, hw_id } =
@@ -142,6 +162,14 @@ exports.setAlarmTriggeredOnByHwId = async (req, res) => {
       ownerId
     );
 
+    await createDeviceLog(
+      ownerId,
+      updatedDevice._id,
+      updatedDevice.householdId,
+      "alarm",
+      `Alarm activated for device ${updatedDevice.name}.`
+    );
+
     await sendDiscordNotification(
       `:rotating_light: Alarm triggered ON for device "${updatedDevice.name}" by user ${req.user.username}`
     );
@@ -189,6 +217,14 @@ exports.setAlarmTriggeredOffByHwId = async (req, res) => {
     const updatedDevice = await deviceService.setAlarmTriggeredOffByHwId(
       hwId,
       ownerId
+    );
+
+    await createDeviceLog(
+      ownerId,
+      updatedDevice._id,
+      updatedDevice.householdId,
+      "alarm",
+      `Alarm deactivated for device ${updatedDevice.name}`
     );
 
     await sendDiscordNotification(
@@ -259,6 +295,18 @@ exports.setStateActive = async (ws, req) => {
 
     household.active = true;
     await household.save();
+
+    await Promise.all(
+      devices.map((device) =>
+        createDeviceLog(
+          ownerId,
+          device._id,
+          householdId,
+          "activation",
+          `Device ${device.name} activated`
+        )
+      )
+    );
 
     await sendDiscordNotification(
       `:white_check_mark: User ${req.user.username} activated ALL devices in household "${household.name}"`
@@ -333,6 +381,18 @@ exports.setStateDeactive = async (ws, req) => {
 
     household.active = false;
     await household.save();
+
+    await Promise.all(
+      devices.map((device) =>
+        createDeviceLog(
+          ownerId,
+          device._id,
+          householdId,
+          "deactivation",
+          `Device ${device.name} deactivated`
+        )
+      )
+    );
 
     await sendDiscordNotification(
       `:octagonal_sign: User ${req.user.username} deactivated ALL devices in household "${household.name}"`
