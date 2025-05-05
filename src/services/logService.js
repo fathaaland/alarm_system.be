@@ -1,13 +1,14 @@
-// services/logService.js
 const Household = require("../models/Household");
+const mongoose = require("mongoose");
 
 exports.createLog = async (logData) => {
   try {
     const newLog = {
-      userId: logData.userId,
-      deviceId: logData.deviceId,
+      userId: new mongoose.Types.ObjectId(logData.userId),
+      deviceId: new mongoose.Types.ObjectId(logData.deviceId),
       type: logData.type,
       message: logData.message,
+      createdAt: new Date(),
     };
 
     const household = await Household.findByIdAndUpdate(
@@ -20,8 +21,7 @@ exports.createLog = async (logData) => {
       throw new Error("Household not found");
     }
 
-    // Vrátíme nově vytvořený log (poslední v poli)
-    return household.logs[household.logs.length - 1];
+    return household.logs.id(household.logs[household.logs.length - 1]._id);
   } catch (error) {
     throw error;
   }
