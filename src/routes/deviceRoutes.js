@@ -21,7 +21,7 @@ router.put(
 
 const setupDeviceWebSocket = (wss) => {
   wss.on("connection", (ws, req) => {
-    const token = req.headers["authorization"]?.replace("Bearer ", "");
+    const token = req.headers["sec-websocket-protocol"];
 
     if (!token) {
       ws.send(
@@ -37,7 +37,6 @@ const setupDeviceWebSocket = (wss) => {
       header: () => `Bearer ${token}`,
       headers: { authorization: `Bearer ${token}` },
     };
-
     const fakeRes = {
       status: () => fakeRes,
       json: (data) => {
