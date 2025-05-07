@@ -1,19 +1,17 @@
-import Household from "../models/household.js";
+const Household = require("../models/household");
 
-exports.searchHouseholds = (input) => {
-  return new Promise((resolve, reject) => {
-    Household.find({
+exports.searchHouseholds = async (input) => {
+  try {
+    const households = await Household.find({
       $or: [
+        { _id: input },
         { id: { $regex: input, $options: "i" } },
         { name: { $regex: input, $options: "i" } },
-        { ownerId: { $regex: input, $options: "i" } },
+        { ownerId: input },
       ],
-    })
-      .then((households) => {
-        resolve(households);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
+    });
+    return households;
+  } catch (error) {
+    throw error;
+  }
 };
