@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { deviceDB } = require("../db/dbConnection");
+const { smart_homeDB } = require("../db/dbConnection");
 
 const deviceSchema = new mongoose.Schema({
   name: {
@@ -39,6 +39,6 @@ const deviceSchema = new mongoose.Schema({
   },
 });
 
-const Device = deviceDB.model("Device", deviceSchema);
+const Device = smart_homeDB.model("Device", deviceSchema);
 
 module.exports = Device;

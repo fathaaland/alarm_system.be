@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { adminDB } = require("../db/dbConnection");
+const { smart_homeDB } = require("../db/dbConnection");
 const bcrypt = require("bcryptjs");
 
 const adminSchema = new mongoose.Schema({
@@ -51,6 +51,6 @@ adminSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-const Admin = adminDB.model("Admin", adminSchema);
+const Admin = smart_homeDB.model("Admin", adminSchema);
 
 module.exports = Admin;

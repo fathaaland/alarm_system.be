@@ -17,10 +17,6 @@ const connectToDB = (uri, dbName) => {
   return connection;
 };
 
-const userDB = connectToDB(process.env.MONGO_USER_URI, "users");
-const householdDB = connectToDB(process.env.MONGO_HOUSEHOLD_URI, "household");
-const deviceDB = connectToDB(process.env.MONGO_DEVICE_URI, "devices");
-// const logDB = connectToDB(process.env.MONGO_LOG_URI, "logs");
-const adminDB = connectToDB(process.env.MONGO_ADMIN_URI, "admin");
+const smart_homeDB = connectToDB(process.env.MONGO_URI, "smart_home");
 
-module.exports = { userDB, householdDB, deviceDB /*logDB*/, adminDB };
+module.exports = { smart_homeDB };

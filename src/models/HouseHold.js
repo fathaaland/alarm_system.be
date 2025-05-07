@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { householdDB } = require("../db/dbConnection");
+const { smart_homeDB } = require("../db/dbConnection");
 
 const householdSchema = new mongoose.Schema({
   name: {
@@ -54,10 +54,10 @@ const householdSchema = new mongoose.Schema({
   ],
 });
 
-if (householdDB.models.Household) {
-  delete householdDB.models.Household;
+if (smart_homeDB.models.Household) {
+  delete smart_homeDB.models.Household;
 }
 
-const Household = householdDB.model("Household", householdSchema);
+const Household = smart_homeDB.model("Household", householdSchema);
 
 module.exports = Household;
