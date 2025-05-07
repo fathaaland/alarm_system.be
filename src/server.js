@@ -11,7 +11,7 @@ const householdRoutes = require("./routes/householdRoutes");
 const userRoutes = require("./routes/userRoutes");
 const adminAuthRoutes = require("./routes/adminRoutes");
 const logRoutes = require("./routes/logRoutes");
-const searchRoutes = require("./routes/searchRoute");
+const searchRoutes = require("./routes/searchRoutes");
 const {
   router: deviceRoutes,
   setupDeviceWebSocket,
